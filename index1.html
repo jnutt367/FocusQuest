@@ -117,6 +117,42 @@
   }
 }
 
+
+/* Mobile polish patch: keep controls away from Fox/dialogue responses and allow comfortable play. */
+@media(max-width:930px){
+  body.game-active .mobile-pad{
+    margin-top:24px;
+    margin-bottom:10px;
+    z-index:6;
+  }
+  .mobile-pad button{
+    min-height:46px;
+    padding:12px 9px;
+  }
+  .dialogue{
+    bottom:150px;
+    z-index:45;
+    max-height:34vh;
+  }
+  .audio-bar{
+    z-index:50;
+  }
+}
+@media(max-width:520px){
+  body.game-active .mobile-pad{
+    margin-top:30px;
+    margin-bottom:14px;
+    transform:scale(.96);
+    transform-origin:center top;
+  }
+  .dialogue{
+    bottom:158px;
+    left:14px;
+    right:14px;
+    max-height:32vh;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -650,7 +686,7 @@ const next=nextFoxReward();
 E.foxRewards.innerHTML=`<div><strong>🦊 Fox Friendship:</strong> ${state.stars} Stars</div><div class="small">${next?`Next: ${next.icon} ${next.name} at ${next.stars} stars (${Math.max(0,next.stars-state.stars)} to go).`:'All fox upgrades unlocked!'}</div><div class="fox-reward-list">`+foxRewardMilestones.map(r=>`<div class="fox-reward-row ${state.stars>=r.stars?'unlocked':''}"><div class="fox-reward-icon">${state.stars>=r.stars?r.icon:'🔒'}</div><div><strong>${r.stars}⭐ ${r.name}</strong><span>${state.stars>=r.stars?'Unlocked':r.desc}</span></div></div>`).join('')+`</div>`;
 }
 function loop(){update();draw();ui();requestAnimationFrame(loop)}
-window.addEventListener('keydown',e=>{state.keys[e.key]=true;state.keys[e.key.toLowerCase()]=true;if([' ','e','E'].includes(e.key)){e.preventDefault();interact()}if(['j','J','Shift'].includes(e.key)){e.preventDefault();jump()}if(['f','F'].includes(e.key)){e.preventDefault();askFox()}if(['b','B'].includes(e.key))openBreathing()});window.addEventListener('keyup',e=>{state.keys[e.key]=false;state.keys[e.key.toLowerCase()]=false});const mobileDirs={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};let activeMobileKeys=new Set();function setMobileKey(k,on,btn){state.mobileMoving=on||activeMobileKeys.size>0;if(on){activeMobileKeys.add(k);state.keys[k]=true;btn&&btn.classList.add('active')}else{activeMobileKeys.delete(k);state.keys[k]=false;btn&&btn.classList.remove('active')}state.mobileMoving=activeMobileKeys.size>0}function clearMobileKeys(){document.querySelectorAll('[data-dir]').forEach(btn=>btn.classList.remove('active'));activeMobileKeys.forEach(k=>state.keys[k]=false);activeMobileKeys.clear();state.mobileMoving=false}document.querySelectorAll('[data-dir]').forEach(b=>{const k=mobileDirs[b.dataset.dir];b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture?.(e.pointerId);setMobileKey(k,true,b)});b.addEventListener('pointerup',e=>{e.preventDefault();setMobileKey(k,false,b)});b.addEventListener('pointercancel',e=>{e.preventDefault();setMobileKey(k,false,b)});});window.addEventListener('pointerup',clearMobileKeys);window.addEventListener('blur',clearMobileKeys);document.querySelector('[data-action="interact"]').addEventListener('click',interact);document.querySelector('[data-action="jump"]').addEventListener('click',jump);document.querySelector('[data-action="fox"]').addEventListener('click',askFox);document.querySelector('[data-action="breathe"]').addEventListener('click',openBreathing);const audioBar=document.getElementById('audioBar'),audioToggle=document.getElementById('audioToggle');let audioCollapseTimer=null;function openAudioPanel(){audioBar.classList.remove('collapsed');audioToggle.textContent='✕';clearTimeout(audioCollapseTimer);audioCollapseTimer=setTimeout(()=>{audioBar.classList.add('collapsed');audioToggle.textContent='🎵'},4500)}function closeAudioPanel(){audioBar.classList.add('collapsed');audioToggle.textContent='🎵';clearTimeout(audioCollapseTimer)}audioToggle.addEventListener('click',()=>audioBar.classList.contains('collapsed')?openAudioPanel():closeAudioPanel());document.getElementById('musicBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.toggle()});document.getElementById('sfxBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.test()});ui();loop();
+window.addEventListener('keydown',e=>{state.keys[e.key]=true;state.keys[e.key.toLowerCase()]=true;if([' ','e','E'].includes(e.key)){e.preventDefault();interact()}if(['j','J','Shift'].includes(e.key)){e.preventDefault();jump()}if(['f','F'].includes(e.key)){e.preventDefault();askFox()}if(['b','B'].includes(e.key))openBreathing()});window.addEventListener('keyup',e=>{state.keys[e.key]=false;state.keys[e.key.toLowerCase()]=false});const mobileDirs={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};let activeMobileKeys=new Set();function setMobileKey(k,on,btn){state.mobileMoving=on||activeMobileKeys.size>0;if(on){activeMobileKeys.add(k);state.keys[k]=true;btn&&btn.classList.add('active')}else{activeMobileKeys.delete(k);state.keys[k]=false;btn&&btn.classList.remove('active')}state.mobileMoving=activeMobileKeys.size>0}function clearMobileKeys(){document.querySelectorAll('[data-dir]').forEach(btn=>btn.classList.remove('active'));activeMobileKeys.forEach(k=>state.keys[k]=false);activeMobileKeys.clear();state.mobileMoving=false}document.querySelectorAll('[data-dir]').forEach(b=>{const k=mobileDirs[b.dataset.dir];b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture?.(e.pointerId);setMobileKey(k,true,b)});b.addEventListener('pointerup',e=>{e.preventDefault();setMobileKey(k,false,b)});b.addEventListener('pointercancel',e=>{e.preventDefault();setMobileKey(k,false,b)});});window.addEventListener('pointerup',e=>{if(!e.target.closest('.mobile-pad')) clearMobileKeys()});window.addEventListener('blur',clearMobileKeys);document.querySelector('[data-action="interact"]').addEventListener('click',interact);const jumpBtn=document.querySelector('[data-action="jump"]');jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();jump()});jumpBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation()});document.querySelector('[data-action="fox"]').addEventListener('click',askFox);document.querySelector('[data-action="breathe"]').addEventListener('click',openBreathing);const audioBar=document.getElementById('audioBar'),audioToggle=document.getElementById('audioToggle');let audioCollapseTimer=null;function openAudioPanel(){audioBar.classList.remove('collapsed');audioToggle.textContent='✕';clearTimeout(audioCollapseTimer);audioCollapseTimer=setTimeout(()=>{audioBar.classList.add('collapsed');audioToggle.textContent='🎵'},4500)}function closeAudioPanel(){audioBar.classList.add('collapsed');audioToggle.textContent='🎵';clearTimeout(audioCollapseTimer)}audioToggle.addEventListener('click',()=>audioBar.classList.contains('collapsed')?openAudioPanel():closeAudioPanel());document.getElementById('musicBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.toggle()});document.getElementById('sfxBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.test()});ui();loop();
 </script>
 </body>
 </html>
