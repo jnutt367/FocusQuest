@@ -167,7 +167,26 @@ const toolInfo={
 };
 const tiers=['Beginner','Intermediate','Tertiary','Advanced'];
 const baseMaps=[
-['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGPPGGGGGGGT','TGPPPPPGGGPPGGGHHGGT','TGPGGGPGGGPPGGGHHGGT','TGPGFGPPPPPPPPGGGGGT','TGPGGGPGGGPPGGGGNGGT','TGPPPPPGGGPPGGGGGGGT','TGGGGGGGGGPPGGGGCGGT','TGGWWWGGGGPPGGGGGGGT','TGGWWWGGGGPPGGGRTGGT','TGGGGGGGGGPPGGGGGGGT','TGGGGGGGGGPPGGGGGGGT','TTTTTTTTTTTTTTTTTTTT'],
+[
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+'TGGGGGGGTTTTTTGGGGTTTTTTTTTTGT',
+'TGGGPGGPPGGGGGGGGGGGTGGGWWWGGT',
+'TGGGPGGGTGGGGGGPGGGGTGGGWWWGGT',
+'TGGGPGGPPPPPPPPPGGGGTTTTTTTGGT',
+'TGTTPTTGTGGGGGGPGGGGGGGGGGGGGT',
+'TGGGPGGGTGGGGGGPGGGGGGGGGGGGGT',
+'TGGGPGGGGGGGGGGPGGGGGGGGGGGGGT',
+'TGGPPPPPPPPPPPPPPPPPGGGGTGGGGT',
+'TGGGGGGGGGGGGGGPGGGGGGGGTGGGGT',
+'TGGGGGGGGGGGGGGPPGGGGGGGTGGGGT',
+'TGTTTTTGGGGGGGGPGGGGGGGGTGGGGT',
+'TGGGGGGGGGWWWWGPGGGGGGGGTGGGGT',
+'TGGGGGGGGGWWWWGPGGHHHHGGTGGGGT',
+'TGPGGGGGGGWWWWGPGGHHHHGGTGGGGT',
+'TGGGGGGGGGGGGGGPGGHHHHGGGGGGGT',
+'TGGGGGGGGGGGGGGGGGGGGGGGGGGGGT',
+'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+],
 ['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGMMMMGGGGGT','TGGPPPPPGGGGGGGGNGGT','TGGPGGGPGGWWWGGGGGGT','TGGPGCGPPPPPPPPPGGGT','TGGPGGGPGGWWWGGPGGGT','TGGPPPPPGGGGGGGPGGGT','TGGGGGGGGMMMMGGPGGGT','TGGGHHGGGGGGGGGPGGGT','TGGGHHGGGGGFGGGRPGGT','TGGGGGGGGGGGGGGGPGGT','TGGGGGGGGGGGGGGGGGGT','TTTTTTTTTTTTTTTTTTTT'],
 ['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGGGGGGGGGGT','TGGMMMMMPPPPPMMMMGGT','TGGGGGGPGGGGPGGGGGGT','TGGWGGGPGCGGPGGGWGT','TGGWGGGPGGGGPGGGWGT','TGGWGGGPPPPPPGGGWGT','TGGGGGGGGFGGGGGGGGT','TGPPPPMMMMMMMMPPGGT','TGPGGGGGNGGGGGPGGGT','TGPGGGGHHHHGGGPRGGT','TGGGGGGHHHHGGGGGGGT','TTTTTTTTTTTTTTTTTTTT']
 ];
@@ -183,10 +202,11 @@ const levelThemes=[
 {title:'Priority Palace',goal:'Choose what matters most.',tool:'Priority Compass',npc:'King Priority',lesson:['Not every urgent thing is important.','Pick one main quest before chasing side quests.','Priorities protect your attention.'],challenge:'priority',teach:'Choose the main quest.'},
 {title:'Restart Summit',goal:'Recover and begin again.',tool:'Recovery Cape',npc:'Elder Restart',lesson:['Bad moments do not cancel your progress.','A restart is a skill.','You can begin again with one breath and one step.'],challenge:'restart',teach:'Begin again.'}
 ];
-function makeLevels(){let arr=[];tiers.forEach((tier,ti)=>{for(let i=0;i<3;i++){const th=levelThemes[(ti*3+i)%levelThemes.length];arr.push({...th,tier,tierIndex:ti,difficulty:ti+1,index:arr.length,map:baseMaps[(ti+i)%baseMaps.length],bg:['#69b96b','#5fa9d8','#9b7bd7','#d86f5f'][ti],start:[2+i,9-i],badge:`${tier} Badge ${i+1}`})}});return arr}
+function makeLevels(){let arr=[];tiers.forEach((tier,ti)=>{for(let i=0;i<3;i++){const th=levelThemes[(ti*3+i)%levelThemes.length];arr.push({...th,tier,tierIndex:ti,difficulty:ti+1,index:arr.length,map:baseMaps[(ti+i)%baseMaps.length],bg:['#69b96b','#5fa9d8','#9b7bd7','#d86f5f'][ti],start:(ti===0&&i===0?[2,14]:[2+i,9-i]),badge:`${tier} Badge ${i+1}`})}});return arr}
 const levels=makeLevels();
-let state={started:false,level:0,keys:{},step:0,energy:5,stars:0,tools:[],met:false,chest:false,challenge:false,ready:false,message:false,hardMode:0,completed:false,foxUnlocks:[]};
+let state={started:false,level:0,keys:{},step:0,energy:5,stars:0,tools:[],met:false,chest:false,challenge:false,ready:false,message:false,hardMode:0,completed:false,foxUnlocks:[],forestSecrets:{grove:false,crystal:false,path:false}};
 let player={x:120,y:430,w:34,h:42,spd:3,color:'#2f80ed',z:0,vz:0,jumping:false,dir:'down',moving:false,walkFrame:0,walkDust:0,landingSquash:0,jumpCooldown:0};
+let camera={x:0,y:0};
 let fox={x:80,y:450,w:34,h:24,bubbleTimer:0,tip:'I’m Fidget Fox. I’ll help you remember the skill.',mood:'ready'};
 const foxTips={start:['I’ll follow along. When you feel stuck, press F or tap 🦊.','First quest: meet the helper, practice, open the chest, then use the gate.'],npc:['Nice! A real-life ADHD tool is stronger when you practice it right away.','Tools are not magic fixes. They are tiny helpers you can actually use.'],challenge:['Great choice! Your brain just practiced a new path.','That’s the skill: pause, choose, and try again.'],miss:['No shame. Mistakes are practice too. Let’s return gently.','That one was tricky. ADHD progress grows through kind restarts.'],chest:['Treasure found! Stars remind your brain that effort matters.','You earned that reward by practicing the skill.'],gate:['The gate is ready. You completed the learning loop!','You did it: learn, practice, reward, review.'],jump:['Good hop! Movement can help reset ADHD energy.'],lowEnergy:['Energy is low. Try Pause Power with B, or take one tiny step.'],idle:['Still with you. Look for a helper, board, chest, or gate.','Little steps count. Pick the next visible thing.']};
 
@@ -231,11 +251,34 @@ let flyingStars=[];
 function lvl(){return levels[state.level]}
 function startGame(){AudioGame.unlock();AudioGame.sfx('start');by('start').style.display='none';state.started=true;resetLevel();foxSpeak('start');showMessage('Inner Coach',`Welcome to ${lvl().title}. Talk to ${lvl().npc}, complete the practice challenge, open the chest, then reach the gate.`)}
 function resetLevel(){let [sx,sy]=lvl().start;[sx,sy]=findSafeStart(sx,sy);player.x=sx*TILE;player.y=sy*TILE;state.step=0;state.met=false;state.chest=false;state.challenge=false;state.ready=false;state.energy=Math.max(2,5-state.hardMode);player.z=0;player.vz=0;player.jumping=false;player.moving=false;player.walkFrame=0;player.walkDust=0;player.landingSquash=0;player.jumpCooldown=0;fox.x=player.x-42;fox.y=player.y+12;fox.bubbleTimer=0;particles=[];flyingStars=[];}
-function draw(){const L=lvl();drawSky(L);for(let y=0;y<L.map.length;y++)for(let x=0;x<L.map[y].length;x++)drawTile(L.map[y][x],x*TILE,y*TILE,x,y,L);drawScenery(L);drawCharacter(15*TILE,5*TILE,'#06d6a0',L.npc);drawChest(16*TILE,8*TILE);drawBoard(4*TILE,4*TILE);drawGate(16*TILE,10*TILE);drawFidgetFox();drawPlayer();drawParticles();drawFlyingStars();drawVignette()}
+function updateCamera(){
+  const L=lvl();
+  const mapW=L.map[0].length*TILE, mapH=L.map.length*TILE;
+  camera.x=Math.max(0,Math.min(mapW-canvas.width,player.x+player.w/2-canvas.width/2));
+  camera.y=Math.max(0,Math.min(mapH-canvas.height,player.y+player.h/2-canvas.height/2));
+}
+function draw(){const L=lvl();updateCamera();drawSky(L);ctx.save();ctx.translate(-camera.x,-camera.y);for(let y=0;y<L.map.length;y++)for(let x=0;x<L.map[y].length;x++)drawTile(L.map[y][x],x*TILE,y*TILE,x,y,L);drawScenery(L);drawForestExpansionDecor();drawCharacter(15*TILE,5*TILE,'#06d6a0',L.npc);drawChest(16*TILE,8*TILE);drawBoard(4*TILE,4*TILE);drawGate(16*TILE,10*TILE);drawFidgetFox();drawPlayer();drawParticles();ctx.restore();drawFlyingStars();drawVignette()}
 function drawSky(L){ctx.fillStyle=L.bg;ctx.fillRect(0,0,960,600);ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*91+Date.now()/80)%980,40+(i%4)*28,16+i%3*4,0,Math.PI*2);ctx.fill()}}
 function drawTile(t,x,y,gx,gy,L){let c=t==='T'?'#21452f':t==='P'?'#d9b46f':t==='W'?'#3fa9f5':t==='M'?'#4b5563':t==='H'?'#8b5e34':'#7fc96d';ctx.fillStyle=c;ctx.fillRect(x,y,TILE,TILE);ctx.strokeStyle='rgba(0,0,0,.06)';ctx.strokeRect(x,y,TILE,TILE);if(t==='G'){ctx.fillStyle='rgba(255,255,255,.14)';ctx.fillRect(x+8,y+8,5,5);ctx.fillRect(x+30,y+27,4,4);if((gx+gy)%5===0){drawTinyFlower(x+33,y+10,'#fff6bf')}if((gx*2+gy)%7===0){drawTinyFlower(x+11,y+33,'#ef476f')}}if(t==='P'){ctx.fillStyle='rgba(90,54,22,.18)';ctx.beginPath();ctx.arc(x+10,y+12,3,0,Math.PI*2);ctx.arc(x+31,y+31,2,0,Math.PI*2);ctx.fill()}if(t==='W'){let wave=(Date.now()/120+gx*8)%28;ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(x+4+wave,y+14,16,4);ctx.fillRect(x+2+((wave+12)%30),y+32,12,3);ctx.fillStyle='rgba(0,82,140,.18)';ctx.fillRect(x,y+TILE-8,TILE,8)}if(t==='T'){ctx.fillStyle='#2e6b3f';ctx.beginPath();ctx.arc(x+24+Math.sin(Date.now()/900+gx)*2,y+20,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#5b371d';ctx.fillRect(x+20,y+26,8,18);ctx.fillStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.arc(x+17,y+13,5,0,Math.PI*2);ctx.fill()}if(t==='H'){ctx.fillStyle='rgba(255,225,140,.18)';ctx.fillRect(x+6,y+7,34,8);ctx.fillRect(x+8,y+25,32,7)}}
 function drawTinyFlower(x,y,color){ctx.fillStyle=color;for(let a=0;a<Math.PI*2;a+=Math.PI/2){ctx.beginPath();ctx.arc(x+Math.cos(a)*3,y+Math.sin(a)*3,2,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#f7c948';ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill()}
 function drawScenery(L){ctx.fillStyle='rgba(255,247,204,.25)';ctx.beginPath();ctx.arc(120,90,55,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(0,0,960,8)}
+function drawForestExpansionDecor(){
+  if(state.level!==0) return;
+  // Secret Grove: decorative clearing in the expanded Focus Forest.
+  ctx.save();
+  const pulse=.75+Math.sin(Date.now()/360)*.25;
+  ctx.fillStyle='rgba(255,246,191,.18)';ctx.beginPath();ctx.arc(4*TILE+24,2*TILE+24,72,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(247,201,72,.45)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(4*TILE+24,2*TILE+24,48+pulse*4,0,Math.PI*2);ctx.stroke();
+  for(let i=0;i<8;i++){let a=i*Math.PI/4+Date.now()/1400;drawStarShape(4*TILE+24+Math.cos(a)*42,2*TILE+24+Math.sin(a)*30,4,'#fff6bf','#f7c948')}
+  // Crystal Tree Clearing marker.
+  const cx=7*TILE+24, cy=2*TILE+24;
+  ctx.fillStyle='rgba(123,97,255,.35)';ctx.beginPath();ctx.arc(cx,cy,26+pulse*5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#7b61ff';ctx.beginPath();ctx.moveTo(cx,cy-30);ctx.lineTo(cx+18,cy);ctx.lineTo(cx,cy+32);ctx.lineTo(cx-18,cy);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#fff6bf';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText('Secret Grove',4*TILE+24,1*TILE+8);
+  ctx.restore();
+}
+
 function drawBoard(x,y){ctx.fillStyle='#7a4e2a';ctx.fillRect(x+8,y+14,32,26);ctx.fillStyle='#f5deb3';ctx.fillRect(x+4,y+4,40,24);ctx.fillStyle='#17202a';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText('TRY',x+24,y+20)}
 function drawChest(x,y){if(!state.chest){ctx.save();ctx.globalAlpha=.35+Math.sin(Date.now()/180)*.12;ctx.fillStyle='#fff6bf';ctx.beginPath();ctx.arc(x+24,y+26,32,0,Math.PI*2);ctx.fill();ctx.restore()}ctx.fillStyle=state.chest?'#a16207':'#f7c948';round(x+8,y+16,32,24,6);ctx.fill();ctx.fillStyle='#704214';ctx.fillRect(x+8,y+26,32,4);ctx.fillStyle=state.chest?'#fff6bf':'#17202a';ctx.fillRect(x+21,y+25,6,8);if(!state.chest)drawStarShape(x+24,y+7,8,'#fff6bf','#f7c948')}
 function drawGate(x,y){ctx.save();ctx.globalAlpha=state.ready?.95:.45;ctx.fillStyle=state.ready?'#f7c948':'#7b61ff';ctx.beginPath();ctx.arc(x+24,y+24,35+Math.sin(Date.now()/250)*5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17202a';round(x+10,y+4,28,42,14);ctx.fill();ctx.fillStyle='white';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('GATE',x+24,y+58);ctx.restore()}
@@ -384,7 +427,7 @@ function spawnFlyingStar(x,y,label='Focus Star'){
   AudioGame.sfx('star');
 }
 function spawnStarReward(label='Focus Star'){
-  spawnFlyingStar(player.x+17,player.y-8,label);
+  spawnFlyingStar(player.x+17-camera.x,player.y-8-camera.y,label);
 }
 function drawFlyingStars(){
   for(let i=flyingStars.length-1;i>=0;i--){
@@ -449,6 +492,7 @@ function update(){
       }
     }
   }
+  checkFocusForestDiscovery();
 }
 function jump(){
   AudioGame.unlock();
@@ -502,6 +546,29 @@ function findSafeStart(sx,sy){
   return [sx,sy];
 }
 function near(x,y,dist=72){return Math.hypot(player.x+17-(x*TILE+24),player.y+22-(y*TILE+24))<dist}
+function checkFocusForestDiscovery(){
+  if(state.level!==0||state.message) return;
+  const tx=Math.floor((player.x+17)/TILE), ty=Math.floor((player.y+22)/TILE);
+  if(!state.forestSecrets.path && tx<=6 && ty>=5 && ty<=8){
+    state.forestSecrets.path=true;
+    foxSay('This path was hiding in plain sight. Nice exploring!');
+    spawnParticles(player.x+17,player.y+24,'sparkle',16);
+  }
+  if(!state.forestSecrets.grove && tx>=2 && tx<=6 && ty>=1 && ty<=4){
+    state.forestSecrets.grove=true;
+    AudioGame.sfx('success');
+    foxSay('Secret Grove found! Exploration is a focus skill too.');
+    spawnParticles(player.x+17,player.y+24,'star',32);
+    floatText(player.x+17,player.y-14,'🌲 Secret Grove Found!');
+  }
+  if(!state.forestSecrets.crystal && tx>=6 && tx<=8 && ty>=1 && ty<=3){
+    state.forestSecrets.crystal=true;
+    AudioGame.sfx('success');
+    foxSay('Crystal Clearing discovered. This will be a perfect hidden treasure spot soon!');
+    spawnParticles(player.x+17,player.y+24,'star',26);
+    floatText(player.x+17,player.y-14,'✨ Crystal Clearing!');
+  }
+}
 function interact(){AudioGame.unlock();AudioGame.sfx('click');if(state.message){hideMessage();return}if(near(15,5))talkNpc();else if(near(4,4))challenge();else if(near(16,8))chest();else if(near(16,10))gate();else showMessage('Inner Coach','Move closer to a helper, practice board, chest, or gate.')}
 function talkNpc(){state.met=true;addTool(lvl().tool);state.step=Math.max(state.step,1);foxSpeak('npc');showMessage(lvl().npc,dialogueFor(lvl())+`<br><br><strong>New tool:</strong> ${lvl().tool}`);checkReady()}
 function dialogueFor(L){return `This is ${L.title}. Today we learn: <strong>${L.teach}</strong> The challenge gets harder as the tiers rise.`}
