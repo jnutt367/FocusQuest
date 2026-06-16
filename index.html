@@ -62,6 +62,61 @@
   }
 }
 
+
+/* === Mobile start-screen fix: keep Start Adventure visible and controls out of the way === */
+@media (max-width:930px){
+  canvas{
+    max-height:62vh;
+  }
+
+  .start-overlay{
+    inset:10px;
+    overflow-y:auto;
+    place-items:start center;
+    align-content:start;
+    padding:18px 12px 72px;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .start-card{
+    width:min(100%,520px);
+    padding-top:4px;
+  }
+
+  .start-card h1{
+    font-size:clamp(34px,12vw,52px);
+    letter-spacing:-1.5px;
+    line-height:.95;
+    margin-bottom:8px;
+  }
+
+  .start-card p{
+    font-size:14px;
+    line-height:1.38;
+    margin:8px 0 10px;
+  }
+
+  .start-card button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:46px;
+    padding:12px 18px;
+    margin-top:8px;
+    box-shadow:0 10px 22px rgba(0,0,0,.28);
+  }
+
+  .start-card .small{
+    font-size:11px!important;
+    line-height:1.35;
+    margin-top:8px!important;
+  }
+
+  body:not(.game-active) .mobile-pad{
+    display:none!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -249,7 +304,7 @@ function foxRewardMessage(r){
 let particles=[];
 let flyingStars=[];
 function lvl(){return levels[state.level]}
-function startGame(){AudioGame.unlock();AudioGame.sfx('start');by('start').style.display='none';state.started=true;resetLevel();foxSpeak('start');showMessage('Inner Coach',`Welcome to ${lvl().title}. Talk to ${lvl().npc}, complete the practice challenge, open the chest, then reach the gate.`)}
+function startGame(){document.body.classList.add('game-active');AudioGame.unlock();AudioGame.sfx('start');by('start').style.display='none';state.started=true;resetLevel();foxSpeak('start');showMessage('Inner Coach',`Welcome to ${lvl().title}. Talk to ${lvl().npc}, complete the practice challenge, open the chest, then reach the gate.`)}
 function resetLevel(){let [sx,sy]=lvl().start;[sx,sy]=findSafeStart(sx,sy);player.x=sx*TILE;player.y=sy*TILE;state.step=0;state.met=false;state.chest=false;state.challenge=false;state.ready=false;state.energy=Math.max(2,5-state.hardMode);player.z=0;player.vz=0;player.jumping=false;player.moving=false;player.walkFrame=0;player.walkDust=0;player.landingSquash=0;player.jumpCooldown=0;fox.x=player.x-42;fox.y=player.y+12;fox.bubbleTimer=0;particles=[];flyingStars=[];}
 function updateCamera(){
   const L=lvl();
