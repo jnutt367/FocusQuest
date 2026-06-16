@@ -144,6 +144,7 @@ const AudioGame=(()=>{
       fanfare:[[523,.12],[659,.12,.12],[784,.12,.24],[1046,.35,.38]],
       star:[[784,.08],[988,.11,.07],[1318,.18,.17]],
       jump:[[330,.06],[440,.08,.05],[660,.10,.11]],
+      splash:[[392,.05],[330,.06,.04],[262,.08,.09]],
       sparkle:[[1046,.06],[1318,.08,.06]],
       click:[[440,.05]]
     }[name]||[[440,.08]];
@@ -185,7 +186,7 @@ const levelThemes=[
 function makeLevels(){let arr=[];tiers.forEach((tier,ti)=>{for(let i=0;i<3;i++){const th=levelThemes[(ti*3+i)%levelThemes.length];arr.push({...th,tier,tierIndex:ti,difficulty:ti+1,index:arr.length,map:baseMaps[(ti+i)%baseMaps.length],bg:['#69b96b','#5fa9d8','#9b7bd7','#d86f5f'][ti],start:[2+i,9-i],badge:`${tier} Badge ${i+1}`})}});return arr}
 const levels=makeLevels();
 let state={started:false,level:0,keys:{},step:0,energy:5,stars:0,tools:[],met:false,chest:false,challenge:false,ready:false,message:false,hardMode:0,completed:false,foxUnlocks:[]};
-let player={x:120,y:430,w:34,h:42,spd:3,color:'#2f80ed',z:0,vz:0,jumping:false};
+let player={x:120,y:430,w:34,h:42,spd:3,color:'#2f80ed',z:0,vz:0,jumping:false,dir:'down',moving:false,walkFrame:0,walkDust:0,landingSquash:0,jumpCooldown:0};
 let fox={x:80,y:450,w:34,h:24,bubbleTimer:0,tip:'I’m Fidget Fox. I’ll help you remember the skill.',mood:'ready'};
 const foxTips={start:['I’ll follow along. When you feel stuck, press F or tap 🦊.','First quest: meet the helper, practice, open the chest, then use the gate.'],npc:['Nice! A real-life ADHD tool is stronger when you practice it right away.','Tools are not magic fixes. They are tiny helpers you can actually use.'],challenge:['Great choice! Your brain just practiced a new path.','That’s the skill: pause, choose, and try again.'],miss:['No shame. Mistakes are practice too. Let’s return gently.','That one was tricky. ADHD progress grows through kind restarts.'],chest:['Treasure found! Stars remind your brain that effort matters.','You earned that reward by practicing the skill.'],gate:['The gate is ready. You completed the learning loop!','You did it: learn, practice, reward, review.'],jump:['Good hop! Movement can help reset ADHD energy.'],lowEnergy:['Energy is low. Try Pause Power with B, or take one tiny step.'],idle:['Still with you. Look for a helper, board, chest, or gate.','Little steps count. Pick the next visible thing.']};
 
@@ -229,7 +230,7 @@ let particles=[];
 let flyingStars=[];
 function lvl(){return levels[state.level]}
 function startGame(){AudioGame.unlock();AudioGame.sfx('start');by('start').style.display='none';state.started=true;resetLevel();foxSpeak('start');showMessage('Inner Coach',`Welcome to ${lvl().title}. Talk to ${lvl().npc}, complete the practice challenge, open the chest, then reach the gate.`)}
-function resetLevel(){let [sx,sy]=lvl().start;[sx,sy]=findSafeStart(sx,sy);player.x=sx*TILE;player.y=sy*TILE;state.step=0;state.met=false;state.chest=false;state.challenge=false;state.ready=false;state.energy=Math.max(2,5-state.hardMode);player.z=0;player.vz=0;player.jumping=false;fox.x=player.x-42;fox.y=player.y+12;fox.bubbleTimer=0;particles=[];flyingStars=[];}
+function resetLevel(){let [sx,sy]=lvl().start;[sx,sy]=findSafeStart(sx,sy);player.x=sx*TILE;player.y=sy*TILE;state.step=0;state.met=false;state.chest=false;state.challenge=false;state.ready=false;state.energy=Math.max(2,5-state.hardMode);player.z=0;player.vz=0;player.jumping=false;player.moving=false;player.walkFrame=0;player.walkDust=0;player.landingSquash=0;player.jumpCooldown=0;fox.x=player.x-42;fox.y=player.y+12;fox.bubbleTimer=0;particles=[];flyingStars=[];}
 function draw(){const L=lvl();drawSky(L);for(let y=0;y<L.map.length;y++)for(let x=0;x<L.map[y].length;x++)drawTile(L.map[y][x],x*TILE,y*TILE,x,y,L);drawScenery(L);drawCharacter(15*TILE,5*TILE,'#06d6a0',L.npc);drawChest(16*TILE,8*TILE);drawBoard(4*TILE,4*TILE);drawGate(16*TILE,10*TILE);drawFidgetFox();drawPlayer();drawParticles();drawFlyingStars();drawVignette()}
 function drawSky(L){ctx.fillStyle=L.bg;ctx.fillRect(0,0,960,600);ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*91+Date.now()/80)%980,40+(i%4)*28,16+i%3*4,0,Math.PI*2);ctx.fill()}}
 function drawTile(t,x,y,gx,gy,L){let c=t==='T'?'#21452f':t==='P'?'#d9b46f':t==='W'?'#3fa9f5':t==='M'?'#4b5563':t==='H'?'#8b5e34':'#7fc96d';ctx.fillStyle=c;ctx.fillRect(x,y,TILE,TILE);ctx.strokeStyle='rgba(0,0,0,.06)';ctx.strokeRect(x,y,TILE,TILE);if(t==='G'){ctx.fillStyle='rgba(255,255,255,.14)';ctx.fillRect(x+8,y+8,5,5);ctx.fillRect(x+30,y+27,4,4);if((gx+gy)%5===0){drawTinyFlower(x+33,y+10,'#fff6bf')}if((gx*2+gy)%7===0){drawTinyFlower(x+11,y+33,'#ef476f')}}if(t==='P'){ctx.fillStyle='rgba(90,54,22,.18)';ctx.beginPath();ctx.arc(x+10,y+12,3,0,Math.PI*2);ctx.arc(x+31,y+31,2,0,Math.PI*2);ctx.fill()}if(t==='W'){let wave=(Date.now()/120+gx*8)%28;ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(x+4+wave,y+14,16,4);ctx.fillRect(x+2+((wave+12)%30),y+32,12,3);ctx.fillStyle='rgba(0,82,140,.18)';ctx.fillRect(x,y+TILE-8,TILE,8)}if(t==='T'){ctx.fillStyle='#2e6b3f';ctx.beginPath();ctx.arc(x+24+Math.sin(Date.now()/900+gx)*2,y+20,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#5b371d';ctx.fillRect(x+20,y+26,8,18);ctx.fillStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.arc(x+17,y+13,5,0,Math.PI*2);ctx.fill()}if(t==='H'){ctx.fillStyle='rgba(255,225,140,.18)';ctx.fillRect(x+6,y+7,34,8);ctx.fillRect(x+8,y+25,32,7)}}
@@ -280,8 +281,9 @@ function wrapText(text,x,y,maxWidth,lineHeight){
 }
 function updateFox(){
   if(!state.started) return;
-  const targetX=player.x-44+(state.keys.ArrowLeft||state.keys.a?70:0);
-  const targetY=player.y+12;
+  const targetX=player.x-44+(player.dir==='left'?70:0);
+  const foxBounce=(player.moving?Math.sin(player.walkFrame*.35)*3:0) - player.z*.18;
+  const targetY=player.y+12+foxBounce;
   fox.x+=(targetX-fox.x)*0.08;fox.y+=(targetY-fox.y)*0.08;
   if(fox.bubbleTimer>0) fox.bubbleTimer--;
 }
@@ -299,7 +301,68 @@ function askFox(){
   const kind=state.energy<=2?'lowEnergy':state.ready?'gate':!state.met?'start':!state.challenge?'npc':!state.chest?'challenge':'idle';
   foxSpeak(kind,true);
 }
-function drawPlayer(){let x=player.x,y=player.y-player.z;ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(player.x+17,player.y+38,Math.max(9,18-player.z*.16),Math.max(3,7-player.z*.06),0,0,Math.PI*2);ctx.fill();if(player.jumping){ctx.strokeStyle='rgba(255,246,191,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x+17,y+26,25+Math.sin(Date.now()/90)*3,0,Math.PI*2);ctx.stroke()}ctx.fillStyle=player.color;round(x+1,y+13,32,28,9);ctx.fill();ctx.fillStyle='#ffd8a8';ctx.beginPath();ctx.arc(x+17,y+12,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17202a';ctx.fillRect(x+11,y+11,4,4);ctx.fillRect(x+20,y+11,4,4);ctx.strokeStyle='#f7c948';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+17,y+27,19,Math.PI*.15,Math.PI*.85);ctx.stroke()}
+function foxSay(text,dialogue=false){
+  fox.tip=text;
+  fox.bubbleTimer=260;
+  spawnParticles(fox.x+18,fox.y+8,'sparkle',8);
+  if(dialogue) showMessage('Fidget Fox', text);
+}
+function drawPlayer(){
+  let x=player.x,y=player.y-player.z;
+  const bob=player.moving&&!player.jumping?Math.sin(player.walkFrame*.42)*2.2:0;
+  const step=player.moving?Math.sin(player.walkFrame*.42):0;
+  const squash=player.landingSquash>0?player.landingSquash/10:0;
+  const bodyW=32+Math.min(4,squash*3), bodyH=28-Math.min(4,squash*3);
+  ctx.fillStyle='rgba(0,0,0,.25)';
+  ctx.beginPath();ctx.ellipse(player.x+17,player.y+38,Math.max(9,18-player.z*.16+Math.abs(step)),Math.max(3,7-player.z*.06),0,0,Math.PI*2);ctx.fill();
+  if(player.jumping){
+    ctx.strokeStyle='rgba(255,246,191,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x+17,y+26,25+Math.sin(Date.now()/90)*3,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.beginPath();ctx.arc(x+17,y+42,4+Math.sin(Date.now()/70)*2,0,Math.PI*2);ctx.fill();
+  }
+  // legs behind the body
+  ctx.strokeStyle='#173b82';ctx.lineWidth=5;ctx.lineCap='round';
+  const legSwing=step*5;
+  ctx.beginPath();ctx.moveTo(x+11,y+35+bob);ctx.lineTo(x+9-legSwing*.35,y+45+bob+Math.abs(step)*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+24,y+35+bob);ctx.lineTo(x+26+legSwing*.35,y+45+bob+Math.abs(step)*2);ctx.stroke();
+  // body
+  ctx.fillStyle=player.color;round(x+1-squash*1.5,y+13+bob+squash,bodyW,bodyH,9);ctx.fill();
+  // arms swing subtly while walking
+  ctx.strokeStyle='#ffd8a8';ctx.lineWidth=5;
+  ctx.beginPath();ctx.moveTo(x+4,y+24+bob);ctx.lineTo(x+1-legSwing*.35,y+31+bob);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+30,y+24+bob);ctx.lineTo(x+34+legSwing*.35,y+31+bob);ctx.stroke();
+  // head direction offset
+  let hx=x+17, hy=y+12+bob;
+  if(player.dir==='left') hx-=2; if(player.dir==='right') hx+=2; if(player.dir==='up') hy-=1; if(player.dir==='down') hy+=1;
+  ctx.fillStyle='#ffd8a8';ctx.beginPath();ctx.arc(hx,hy,12,0,Math.PI*2);ctx.fill();
+  // Direction-specific face/hair rendering. When facing up, hide the eyes and show a clean hair cap
+  // so the north-walk frame does not leave a black mark on the top of the head.
+  ctx.fillStyle='#5b371d';
+  if(player.dir==='up'){
+    ctx.beginPath();
+    ctx.arc(hx,hy-5,10.5,Math.PI,Math.PI*2);
+    ctx.fill();
+    ctx.fillRect(hx-8,hy-7,16,5);
+    ctx.fillStyle='rgba(255,216,168,.35)';
+    ctx.beginPath();ctx.arc(hx,hy+2,7,0,Math.PI*2);ctx.fill();
+  } else {
+    // small hair cap for the visible front/side frames
+    ctx.beginPath();ctx.arc(hx,hy-8,8.5,Math.PI,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#17202a';
+    const eyeY=hy-1;
+    if(player.dir==='left'){
+      ctx.fillRect(hx-6,eyeY,4,4);ctx.fillRect(hx+2,eyeY,4,4);
+    } else if(player.dir==='right'){
+      ctx.fillRect(hx-3,eyeY,4,4);ctx.fillRect(hx+5,eyeY,4,4);
+    } else {
+      ctx.fillRect(hx-7,eyeY,4,4);ctx.fillRect(hx+3,eyeY,4,4);
+    }
+  }
+  // gold smile/focus ring
+  ctx.strokeStyle='#f7c948';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+17,y+27+bob,19,Math.PI*.15,Math.PI*.85);ctx.stroke();
+  if(player.moving&&!player.jumping&&Math.abs(step)>.92){
+    ctx.fillStyle='rgba(255,246,191,.35)';ctx.beginPath();ctx.arc(x+(step>0?9:25),y+43,3,0,Math.PI*2);ctx.fill();
+  }
+}
 function spawnParticles(x,y,type='sparkle',count=18){const colors=type==='star'?['#fff6bf','#f7c948','#ffea00','#ffffff']:type==='jump'?['#d9b46f','#fff6bf','#ffffff']:type==='water'?['#bdefff','#67d5ff','#ffffff','#3fa9f5']:['#06d6a0','#7b61ff','#f7c948','#ffffff'];for(let i=0;i<count;i++){particles.push({x,y,vx:(Math.random()-.5)*(type==='star'?6:4),vy:(Math.random()-.75)*(type==='star'?7:4),life:55+Math.random()*25,size:type==='star'?8+Math.random()*8:3+Math.random()*5,color:colors[i%colors.length],type})}}
 function getHudStarTarget(){
   // The HUD is a DOM overlay, but the star flies inside the canvas.
@@ -352,8 +415,54 @@ function drawParticles(){for(let i=particles.length-1;i>=0;i--){let p=particles[
 function drawVignette(){const g=ctx.createRadialGradient(480,300,150,480,300,520);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.22)');ctx.fillStyle=g;ctx.fillRect(0,0,960,600)}
 function drawStarShape(cx,cy,r,fill='#f7c948',stroke='#17202a'){ctx.save();ctx.beginPath();for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5;let rr=i%2===0?r:r*.45;ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)}ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=stroke;ctx.stroke();ctx.restore()}
 function round(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
-function update(){updateFox();if(player.jumping){player.z+=player.vz;player.vz-=1.05;if(player.z<=0){player.z=0;player.vz=0;player.jumping=false;spawnParticles(player.x+17,player.y+38,'jump',10)}}if(!state.started||state.message)return;let dx=0,dy=0;if(state.keys.ArrowUp||state.keys.w)dy-=1;if(state.keys.ArrowDown||state.keys.s)dy+=1;if(state.keys.ArrowLeft||state.keys.a)dx-=1;if(state.keys.ArrowRight||state.keys.d)dx+=1;if(dx||dy){let len=Math.hypot(dx,dy);move(dx/len*player.spd,dy/len*player.spd)}}
-function jump(){AudioGame.unlock();if(!state.started||state.message||player.jumping)return;const wasWater=onWater();player.jumping=true;player.vz=wasWater?15:13;spawnParticles(player.x+17,player.y+38,wasWater?'water':'jump',wasWater?20:14);AudioGame.sfx('jump');if(wasWater)foxSay('Water slows you down, but a jump can help you hop out!');else if(Math.random()<.45)foxSpeak('jump')}
+function update(){
+  updateFox();
+  if(player.jumpCooldown>0) player.jumpCooldown--;
+  if(player.landingSquash>0) player.landingSquash--;
+  if(player.jumping){
+    player.z+=player.vz;
+    player.vz-=.82; // smoother arc than the earlier snap-hop
+    if(player.z<=0){
+      const landedOnWater=onWater();
+      player.z=0;player.vz=0;player.jumping=false;player.landingSquash=10;
+      spawnParticles(player.x+17,player.y+38,landedOnWater?'water':'jump',landedOnWater?18:12);
+      if(landedOnWater) AudioGame.sfx('splash');
+    }
+  }
+  if(!state.started||state.message){player.moving=false;return}
+  let dx=0,dy=0;
+  if(state.keys.ArrowUp||state.keys.w)dy-=1;
+  if(state.keys.ArrowDown||state.keys.s)dy+=1;
+  if(state.keys.ArrowLeft||state.keys.a)dx-=1;
+  if(state.keys.ArrowRight||state.keys.d)dx+=1;
+  player.moving=!!(dx||dy);
+  if(dx||dy){
+    if(Math.abs(dx)>Math.abs(dy)) player.dir=dx<0?'left':'right'; else player.dir=dy<0?'up':'down';
+    let len=Math.hypot(dx,dy);
+    const beforeX=player.x,beforeY=player.y;
+    move(dx/len*player.spd,dy/len*player.spd);
+    if(beforeX!==player.x||beforeY!==player.y){
+      player.walkFrame+=onWater()?0.16:0.28;
+      player.walkDust++;
+      if(!player.jumping&&player.walkDust%18===0){
+        spawnParticles(player.x+17,player.y+40,onWater()?'water':'jump',onWater()?3:2);
+      }
+    }
+  }
+}
+function jump(){
+  AudioGame.unlock();
+  if(!state.started||state.message||player.jumping||player.jumpCooldown>0)return;
+  const wasWater=onWater();
+  player.jumping=true;
+  player.jumpCooldown=20;
+  player.vz=wasWater?15.8:14.2;
+  player.landingSquash=0;
+  spawnParticles(player.x+17,player.y+38,wasWater?'water':'jump',wasWater?24:16);
+  AudioGame.sfx('jump');
+  if(wasWater)foxSay('Water slows you down, but a jump can help you hop out!');
+  else if(Math.random()<.45)foxSpeak('jump');
+}
 function tileAtPixel(px,py){
   const gx=Math.floor(px/TILE), gy=Math.floor(py/TILE);
   return lvl().map[gy]?.[gx] || 'T';
