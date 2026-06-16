@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Focus Quest: ADHD Adventure - Enhanced</title>
+<style>
+:root{--ink:#17202a;--panel:rgba(255,255,255,.94);--gold:#f7c948;--green:#06d6a0;--blue:#118ab2;--purple:#7b61ff;--red:#ef476f;--sky:#9bd7ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,#4d7cff,#152447 42%,#070b18 100%);color:white;display:grid;place-items:center;overflow-x:hidden}.game-shell{width:min(1240px,97vw);display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}.screen-wrap{position:relative;background:linear-gradient(145deg,#101a34,#050817);padding:14px;border-radius:28px;box-shadow:0 25px 80px rgba(0,0,0,.55);overflow:hidden}.screen-wrap:before{content:"";position:absolute;inset:-80px;background:radial-gradient(circle at 20% 10%,rgba(247,201,72,.25),transparent 28%),radial-gradient(circle at 80% 5%,rgba(6,214,160,.18),transparent 30%),radial-gradient(circle at 50% 100%,rgba(123,97,255,.25),transparent 32%);pointer-events:none}canvas{position:relative;width:100%;max-height:78vh;aspect-ratio:16/10;background:#76b852;image-rendering:pixelated;border-radius:20px;display:block;border:4px solid #ffffff28}.hud{position:absolute;left:8px;top:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none;z-index:5;max-width:104px}.pill{background:rgba(10,15,30,.78);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:4px 8px;font-size:11px;font-weight:900;box-shadow:0 5px 14px rgba(0,0,0,.24);backdrop-filter:blur(6px);min-width:88px;max-width:104px;text-align:center;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#hudTool{max-width:104px}.panel{background:var(--panel);color:var(--ink);border-radius:28px;padding:18px;box-shadow:0 22px 60px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.55)}.panel h1{font-size:30px;margin:0 0 4px;letter-spacing:-1px}.panel h2{font-size:17px;margin:16px 0 8px}.subtitle,.small{color:#5e6b78;font-size:13px;line-height:1.4}.card{background:white;border:2px solid #e6edf6;border-radius:18px;padding:12px;margin-top:10px}.tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tier-chip{border:2px solid #e6edf6;background:#f8fbff;border-radius:14px;padding:9px;font-size:12px;font-weight:900}.tier-chip.active{background:linear-gradient(135deg,#17202a,#33415c);color:white;border-color:#f7c948}.quest-title{font-weight:950}.progress-track{height:14px;border-radius:99px;background:#e9eef5;overflow:hidden;border:1px solid #d6deea}.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#06d6a0,#118ab2,#7b61ff,#f7c948);transition:.35s}.tool-list{display:grid;gap:8px}.tool-card{display:flex;gap:10px;align-items:center;background:#fff;border:2px solid #e6edf6;border-radius:15px;padding:10px}.tool-icon{font-size:23px;width:30px;text-align:center}button{border:0;border-radius:999px;padding:10px 14px;background:#17202a;color:white;font-weight:950;cursor:pointer;margin:4px 3px 0 0}button.secondary{background:#e9eef5;color:#17202a}button.good{background:#087f5b}button.warn{background:#b7791f}.dialogue,.overlay{position:absolute;z-index:10}.dialogue{left:30px;right:30px;bottom:84px;background:rgba(255,255,255,.98);color:var(--ink);border:3px solid #17202a;border-radius:20px;padding:15px 17px 28px;box-shadow:0 12px 35px rgba(0,0,0,.35);display:none;max-height:42vh;overflow:auto}.dialogue strong{color:#1f4e79}.overlay{inset:14px;border-radius:20px;display:none;place-items:center;text-align:center;padding:28px}.start-overlay{display:grid;background:linear-gradient(135deg,rgba(7,11,24,.96),rgba(26,50,101,.96));overflow:hidden}.start-overlay:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 25% 20%,rgba(247,201,72,.25),transparent 18%),radial-gradient(circle at 80% 30%,rgba(6,214,160,.20),transparent 22%)}.start-card,.lesson-card,.celebrate-card{position:relative;z-index:2;max-width:790px}.start-card h1{font-size:clamp(44px,7vw,82px);margin:0;letter-spacing:-3px}.start-card p{font-size:18px;line-height:1.5;color:#e8f1ff}.lesson-overlay{background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(231,243,255,.98));color:var(--ink)}.lesson-card{background:white;border:4px solid #17202a;border-radius:28px;padding:28px;box-shadow:0 18px 50px rgba(0,0,0,.32)}.lesson-card h1{font-size:40px;margin:0}.lesson-card ul{text-align:left;line-height:1.7;font-size:18px}.celebrate-overlay{background:radial-gradient(circle,#fff6bf 0%,#ffd166 30%,#7b61ff 100%);color:#17202a;overflow:hidden}.celebrate-card{background:rgba(255,255,255,.94);border:4px solid #17202a;border-radius:30px;padding:28px;box-shadow:0 22px 70px rgba(0,0,0,.42)}.celebrate-card h1{font-size:48px;margin:0}.badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}.badge{background:#17202a;color:white;border-radius:16px;padding:10px 13px;font-weight:950}.confetti{position:absolute;top:-30px;width:11px;height:22px;border-radius:4px;animation:fall 2.4s linear infinite}.sparkle{position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;animation:pop 1.1s infinite ease-in-out}@keyframes fall{to{transform:translateY(720px) rotate(600deg)}}@keyframes pop{50%{transform:scale(2.4);opacity:.35}}.breathing{background:rgba(7,11,24,.9);color:white}.breath-circle{width:155px;height:155px;border-radius:50%;background:radial-gradient(circle,#d7f9ff,#7b61ff);box-shadow:0 0 55px #7b61ff;margin:20px auto;animation:breathe 6s infinite ease-in-out}@keyframes breathe{0%,100%{transform:scale(.7)}50%{transform:scale(1.16)}}.audio-bar{position:absolute;right:22px;bottom:18px;z-index:30;display:flex;align-items:center;gap:8px;margin:0;padding:8px;background:rgba(255,255,255,.96);color:#17202a;border-radius:999px;border:2px solid rgba(255,255,255,.75);box-shadow:0 10px 25px rgba(0,0,0,.28);max-width:min(430px,calc(100% - 44px));transition:.2s ease}.audio-bar.collapsed{padding:7px}.audio-toggle{min-width:44px;height:40px;border-radius:999px!important;padding:0 12px!important;font-size:18px}.audio-panel{display:flex;align-items:center;gap:8px;max-width:360px;overflow:hidden;transition:max-width .22s ease,opacity .18s ease}.audio-bar.collapsed .audio-panel{max-width:0;opacity:0;pointer-events:none}.audio-bar button{margin:0;background:#17202a;color:white;white-space:nowrap}.audio-status{font-size:12px;font-weight:800;color:#51606f;white-space:nowrap}.audio-help{display:none;position:absolute;right:0;bottom:54px;background:rgba(255,255,255,.96);color:#17202a;border-radius:14px;padding:8px 10px;font-size:12px;font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,.22);width:max-content;max-width:260px}.audio-bar:not(.collapsed) .audio-help{display:block}.mobile-pad{display:none;grid-template-columns:repeat(3,58px);gap:8px;justify-content:center;margin-top:12px}.mobile-pad button{border-radius:14px;padding:14px}.mobile-pad button.jump{background:#7b61ff}.mobile-pad button.breathe{background:#087f5b}.mobile-pad button.fox{background:#ef476f}@media(max-width:930px){body{place-items:start center;padding:8px 0}.game-shell{grid-template-columns:1fr;width:min(100%,98vw)}canvas{max-height:68vh}.hud{left:6px;top:6px;gap:3px;max-width:86px}.pill{padding:3px 6px;font-size:10px;min-width:74px;max-width:86px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.2)}#hudTool{max-width:86px}.dialogue{left:18px;right:18px;bottom:82px;padding-bottom:30px;max-height:44vh}.mobile-pad{display:grid}.panel{order:2}.audio-bar{right:14px;bottom:14px;max-width:calc(100% - 28px)}.audio-status{display:none}.start-card p{font-size:16px}.lesson-card,.celebrate-card{padding:20px}.lesson-card h1,.celebrate-card h1{font-size:32px}}
+</style>
+</head>
+<body>
+<main class="game-shell">
+<section class="screen-wrap">
+<canvas id="game" width="960" height="600"></canvas>
+<div class="hud"><div class="pill" id="hudTier">Beginner</div><div class="pill" id="hudLevel">Level 1</div><div class="pill" id="hudEnergy">Energy 5</div><div class="pill" id="hudStars">Stars 0</div><div class="pill" id="hudTool">Tool: none</div></div>
+<div class="dialogue" id="dialogue"><div id="dialogueText"></div><div id="dialogueActions"></div></div>
+<div class="overlay breathing" id="breathing"><div><h1>Pause Power</h1><p>Breathe in as the circle grows. Breathe out as it shrinks.</p><div class="breath-circle"></div><button onclick="closeBreathing()">I feel ready</button></div></div>
+<div class="overlay lesson-overlay" id="lesson"><div class="lesson-card"><h1 id="lessonTitle"></h1><p id="lessonIntro"></p><ul id="lessonList"></ul><button class="good" onclick="continueFromLesson()">Continue</button></div></div>
+<div class="overlay celebrate-overlay" id="celebrate"><div id="confettiLayer"></div><div class="celebrate-card"><h1 id="celebrateTitle"></h1><p id="celebrateText"></p><div class="badge-row" id="badgeRow"></div><button onclick="showLesson()">Review What We Learned</button></div></div>
+<div class="overlay start-overlay" id="start"><div class="start-card"><h1>Focus Quest</h1><p>A Zelda-like ADHD learning adventure with four tiers: Beginner, Intermediate, Tertiary, and Advanced. Finish Advanced to restart the quest on a harder setting.</p><button onclick="startGame()">Start Adventure</button><div class="small" style="color:#e8f1ff;margin-top:12px">Move: WASD / Arrows · Interact: Space / E · Jump: J / Shift · Ask Fox: F · Pause Tool: B · Audio: 🎵 bottom-right</div></div></div>
+<div class="mobile-pad"><button class="fox" data-action="fox">🦊</button><button data-dir="up">▲</button><span></span><button data-dir="left">◀</button><button data-action="interact">E</button><button data-dir="right">▶</button><button class="jump" data-action="jump">⤒</button><button data-dir="down">▼</button><button class="breathe" data-action="breathe">B</button></div>
+<div class="audio-bar collapsed" id="audioBar"><button id="audioToggle" class="audio-toggle" type="button" aria-label="Open audio controls">🎵</button><div class="audio-panel"><button id="musicBtn" type="button">🔇 Start Music</button><button id="sfxBtn" type="button" class="secondary">🔔 Test Sound</button><span class="audio-status" id="audioStatus">Click Start Music once.</span></div><div class="audio-help">Audio controls stay tucked away here so questions remain readable.</div></div>
+</section>
+<aside class="panel">
+<h1>Focus Quest</h1><p class="subtitle">ADHD coping adventure prototype</p>
+<div class="card"><div class="quest-title" id="sideTitle"></div><p class="small" id="sideGoal"></p><div class="progress-track"><div class="progress-fill" id="progress"></div></div></div>
+<h2>Progression Tiers</h2><div class="tier-grid" id="tierGrid"></div>
+<div class="card"><div class="quest-title" id="questTitle"></div><p class="small" id="questText"></p></div>
+<h2>Coping Tools</h2><div class="tool-list" id="tools"></div>
+<h2>Current Lesson</h2><div class="card small" id="teachBox"></div>
+<h2>Game Loop</h2><div class="card small">Each tier has multiple ADHD skill levels, a practice challenge, a stopping point, and a celebration. Advanced completion unlocks harder replay mode.</div>
+</aside>
+</main>
+<script>
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),TILE=48;
+const E={tier:by('hudTier'),level:by('hudLevel'),energy:by('hudEnergy'),stars:by('hudStars'),tool:by('hudTool'),dialogue:by('dialogue'),dialogueText:by('dialogueText'),dialogueActions:by('dialogueActions'),progress:by('progress'),sideTitle:by('sideTitle'),sideGoal:by('sideGoal'),questTitle:by('questTitle'),questText:by('questText'),tools:by('tools'),teachBox:by('teachBox'),tierGrid:by('tierGrid'),lesson:by('lesson'),lessonTitle:by('lessonTitle'),lessonIntro:by('lessonIntro'),lessonList:by('lessonList'),celebrate:by('celebrate'),celebrateTitle:by('celebrateTitle'),celebrateText:by('celebrateText'),badgeRow:by('badgeRow'),confetti:by('confettiLayer')};
+function by(id){return document.getElementById(id)}
+// --- Audio layer: WebAudio synth, no external files needed. Browser-safe: starts only after a click/tap. ---
+const AudioGame=(()=>{
+  let ctx=null, master=null, musicGain=null, sfxGain=null, musicOn=false, timer=null, step=0;
+  const melody=[
+    ['C4',0.35],['E4',0.35],['G4',0.35],['B4',0.55],['A4',0.35],['G4',0.35],['E4',0.55],
+    ['D4',0.35],['F4',0.35],['A4',0.35],['C5',0.55],['B4',0.35],['G4',0.35],['E4',0.70],
+    ['C4',0.35],['G4',0.35],['E4',0.35],['A4',0.55],['G4',0.35],['D4',0.35],['C4',0.80]
+  ];
+  const noteFreq={C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196,A3:220,B3:246.94,C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,G5:783.99};
+  function setup(){
+    if(ctx) return;
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain(); master.gain.value=0.34; master.connect(ctx.destination);
+    musicGain=ctx.createGain(); musicGain.gain.value=0.22; musicGain.connect(master);
+    sfxGain=ctx.createGain(); sfxGain.gain.value=0.55; sfxGain.connect(master);
+  }
+  async function unlock(){ setup(); if(ctx.state==='suspended') await ctx.resume(); }
+  function tone(freq,dur=0.18,type='sine',gain=0.15,dest=sfxGain,when=0){
+    if(!ctx) return;
+    const t=ctx.currentTime+when, o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(gain,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t+dur+0.03);
+  }
+  function chord(rootFreq,when=0){ tone(rootFreq,0.65,'triangle',0.06,musicGain,when); tone(rootFreq*1.25,0.65,'triangle',0.035,musicGain,when); tone(rootFreq*1.5,0.65,'triangle',0.035,musicGain,when); }
+  function tick(){
+    if(!musicOn||!ctx) return;
+    const [n,d]=melody[step%melody.length];
+    tone(noteFreq[n],d,'triangle',0.10,musicGain,0);
+    if(step%4===0) chord([130.81,146.83,164.81,196][Math.floor(step/4)%4],0);
+    if(step%2===0) tone(98,0.08,'sine',0.035,musicGain,0.02);
+    step++;
+    timer=setTimeout(tick, Math.max(220,d*520));
+  }
+  async function toggle(){
+    await unlock();
+    musicOn=!musicOn;
+    const btn=document.getElementById('musicBtn'), status=document.getElementById('audioStatus');
+    if(musicOn){ step=0; btn.textContent='🔊 Music On'; status.textContent='Music is playing. Sound effects are active.'; tick(); sfx('start'); }
+    else { clearTimeout(timer); btn.textContent='🔇 Start Music'; status.textContent='Music off. Click Start Music to resume.'; }
+  }
+  async function test(){ await unlock(); sfx('success'); document.getElementById('audioStatus').textContent='If you heard a chime, audio is working.'; }
+  function sfx(name){
+    if(!ctx) return;
+    const patterns={
+      start:[[392,.12],[523,.16,.08],[659,.18,.18]],
+      chest:[[523,.09],[659,.09,.08],[784,.16,.16]],
+      success:[[659,.10],[784,.12,.10],[1046,.22,.22]],
+      error:[[220,.16],[185,.20,.12]],
+      fanfare:[[523,.12],[659,.12,.12],[784,.12,.24],[1046,.35,.38]],
+      star:[[784,.08],[988,.11,.07],[1318,.18,.17]],
+      jump:[[330,.06],[440,.08,.05],[660,.10,.11]],
+      sparkle:[[1046,.06],[1318,.08,.06]],
+      click:[[440,.05]]
+    }[name]||[[440,.08]];
+    patterns.forEach(([f,d,w=0])=>tone(f,d,'square',0.12,sfxGain,w));
+  }
+  return {toggle,test,sfx,unlock};
+})();
+
+const toolInfo={
+'Pause Power':['🫧','Pause Power','Breathe before reacting.'],
+'Tiny Step Torch':['🔦','Tiny Step Torch','Shrink a big task into one tiny action.'],
+'Return Bell':['🔔','Return Bell','Notice distraction, then gently return.'],
+'Plan Map':['🗺️','Plan Map','Choose a next step before starting.'],
+'Time Gem':['⏳','Time Gem','Use short timers and breaks.'],
+'Body Boost':['⚡','Body Boost','Move your body to reset energy.'],
+'Kind Words':['💬','Kind Words','Speak to yourself like a helper.'],
+'Environment Shield':['🛡️','Environment Shield','Change the space, not your worth.'],
+'Priority Compass':['🧭','Priority Compass','Pick what matters most right now.'],
+'Recovery Cape':['🪽','Recovery Cape','Restart after a hard moment.']
+};
+const tiers=['Beginner','Intermediate','Tertiary','Advanced'];
+const baseMaps=[
+['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGPPGGGGGGGT','TGPPPPPGGGPPGGGHHGGT','TGPGGGPGGGPPGGGHHGGT','TGPGFGPPPPPPPPGGGGGT','TGPGGGPGGGPPGGGGNGGT','TGPPPPPGGGPPGGGGGGGT','TGGGGGGGGGPPGGGGCGGT','TGGWWWGGGGPPGGGGGGGT','TGGWWWGGGGPPGGGRTGGT','TGGGGGGGGGPPGGGGGGGT','TGGGGGGGGGPPGGGGGGGT','TTTTTTTTTTTTTTTTTTTT'],
+['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGMMMMGGGGGT','TGGPPPPPGGGGGGGGNGGT','TGGPGGGPGGWWWGGGGGGT','TGGPGCGPPPPPPPPPGGGT','TGGPGGGPGGWWWGGPGGGT','TGGPPPPPGGGGGGGPGGGT','TGGGGGGGGMMMMGGPGGGT','TGGGHHGGGGGGGGGPGGGT','TGGGHHGGGGGFGGGRPGGT','TGGGGGGGGGGGGGGGPGGT','TGGGGGGGGGGGGGGGGGGT','TTTTTTTTTTTTTTTTTTTT'],
+['TTTTTTTTTTTTTTTTTTTT','TGGGGGGGGGGGGGGGGGGT','TGGMMMMMPPPPPMMMMGGT','TGGGGGGPGGGGPGGGGGGT','TGGWGGGPGCGGPGGGWGT','TGGWGGGPGGGGPGGGWGT','TGGWGGGPPPPPPGGGWGT','TGGGGGGGGFGGGGGGGGT','TGPPPPMMMMMMMMPPGGT','TGPGGGGGNGGGGGPGGGT','TGPGGGGHHHHGGGPRGGT','TGGGGGGHHHHGGGGGGGT','TTTTTTTTTTTTTTTTTTTT']
+];
+const levelThemes=[
+{title:'Calm Grove',goal:'Practice pausing before reacting.',tool:'Pause Power',npc:'Sage Fern',lesson:['ADHD is not laziness. It is a different way your attention and energy work.','A pause gives your brain space to choose instead of explode.','Use B for Pause Power when energy feels too high.'],challenge:'breath',teach:'Pause, breathe, choose.'},
+{title:'Task Temple',goal:'Break big tasks into tiny steps.',tool:'Tiny Step Torch',npc:'Captain Checklist',lesson:['Big tasks can feel like a mountain.','Tiny steps lower the starting pressure.','A tiny first step could be two minutes, three items, or one corner.'],challenge:'tiny',teach:'Make the task smaller.'},
+{title:'Distraction Woods',goal:'Practice noticing and returning.',tool:'Return Bell',npc:'Ranger Return',lesson:['Getting distracted does not mean you failed.','The skill is noticing and coming back gently.','Kind returning builds confidence over time.'],challenge:'return',teach:'Notice. Name it. Return.'},
+{title:'Planning Peaks',goal:'Plan before rushing in.',tool:'Plan Map',npc:'Mira the Mapper',lesson:['Planning gives your future self a trail to follow.','Choose the first step, the next step, and the finish point.','Plans should be simple enough to actually use.'],challenge:'plan',teach:'Plan the path before the quest.'},
+{title:'Timer Caverns',goal:'Use timers and breaks.',tool:'Time Gem',npc:'Tick Tock Toby',lesson:['ADHD brains often need visible time.','Short sprints can make starting easier.','Breaks are fuel, not failure.'],challenge:'timer',teach:'Try a short sprint and reset.'},
+{title:'Energy Rapids',goal:'Use movement to reset focus.',tool:'Body Boost',npc:'Coach Spark',lesson:['Movement can help your brain regulate energy.','A quick stretch, walk, or wall push can change the moment.','Restless energy can become useful energy.'],challenge:'body',teach:'Move to reset.'},
+{title:'Kindness Castle',goal:'Use helpful self-talk.',tool:'Kind Words',npc:'Lady Mercy',lesson:['Shame makes focus harder.','Kind words help your brain feel safe enough to try again.','Talk to yourself like you would talk to a child you love.'],challenge:'kind',teach:'Encouragement beats shame.'},
+{title:'Signal Sanctuary',goal:'Adjust the environment.',tool:'Environment Shield',npc:'Shieldsmith Sola',lesson:['Sometimes the room needs fixing, not you.','Reduce friction: clear space, silence alerts, prepare tools.','Environment design is an ADHD superpower.'],challenge:'env',teach:'Change the space.'},
+{title:'Priority Palace',goal:'Choose what matters most.',tool:'Priority Compass',npc:'King Priority',lesson:['Not every urgent thing is important.','Pick one main quest before chasing side quests.','Priorities protect your attention.'],challenge:'priority',teach:'Choose the main quest.'},
+{title:'Restart Summit',goal:'Recover and begin again.',tool:'Recovery Cape',npc:'Elder Restart',lesson:['Bad moments do not cancel your progress.','A restart is a skill.','You can begin again with one breath and one step.'],challenge:'restart',teach:'Begin again.'}
+];
+function makeLevels(){let arr=[];tiers.forEach((tier,ti)=>{for(let i=0;i<3;i++){const th=levelThemes[(ti*3+i)%levelThemes.length];arr.push({...th,tier,tierIndex:ti,difficulty:ti+1,index:arr.length,map:baseMaps[(ti+i)%baseMaps.length],bg:['#69b96b','#5fa9d8','#9b7bd7','#d86f5f'][ti],start:[2+i,9-i],badge:`${tier} Badge ${i+1}`})}});return arr}
+const levels=makeLevels();
+let state={started:false,level:0,keys:{},step:0,energy:5,stars:0,tools:[],met:false,chest:false,challenge:false,ready:false,message:false,hardMode:0,completed:false};
+let player={x:120,y:430,w:34,h:42,spd:3,color:'#2f80ed',z:0,vz:0,jumping:false};
+let fox={x:80,y:450,w:34,h:24,bubbleTimer:0,tip:'I’m Fidget Fox. I’ll help you remember the skill.',mood:'ready'};
+const foxTips={start:['I’ll follow along. When you feel stuck, press F or tap 🦊.','First quest: meet the helper, practice, open the chest, then use the gate.'],npc:['Nice! A real-life ADHD tool is stronger when you practice it right away.','Tools are not magic fixes. They are tiny helpers you can actually use.'],challenge:['Great choice! Your brain just practiced a new path.','That’s the skill: pause, choose, and try again.'],miss:['No shame. Mistakes are practice too. Let’s return gently.','That one was tricky. ADHD progress grows through kind restarts.'],chest:['Treasure found! Stars remind your brain that effort matters.','You earned that reward by practicing the skill.'],gate:['The gate is ready. You completed the learning loop!','You did it: learn, practice, reward, review.'],jump:['Good hop! Movement can help reset ADHD energy.'],lowEnergy:['Energy is low. Try Pause Power with B, or take one tiny step.'],idle:['Still with you. Look for a helper, board, chest, or gate.','Little steps count. Pick the next visible thing.']};
+let particles=[];
+function lvl(){return levels[state.level]}
+function startGame(){AudioGame.unlock();AudioGame.sfx('start');by('start').style.display='none';state.started=true;resetLevel();foxSpeak('start');showMessage('Inner Coach',`Welcome to ${lvl().title}. Talk to ${lvl().npc}, complete the practice challenge, open the chest, then reach the gate.`)}
+function resetLevel(){const [sx,sy]=lvl().start;player.x=sx*TILE;player.y=sy*TILE;state.step=0;state.met=false;state.chest=false;state.challenge=false;state.ready=false;state.energy=Math.max(2,5-state.hardMode);player.z=0;player.vz=0;player.jumping=false;fox.x=player.x-42;fox.y=player.y+12;fox.bubbleTimer=0;particles=[];}
+function draw(){const L=lvl();drawSky(L);for(let y=0;y<L.map.length;y++)for(let x=0;x<L.map[y].length;x++)drawTile(L.map[y][x],x*TILE,y*TILE,x,y,L);drawScenery(L);drawCharacter(15*TILE,5*TILE,'#06d6a0',L.npc);drawChest(16*TILE,8*TILE);drawBoard(4*TILE,4*TILE);drawGate(16*TILE,10*TILE);drawFidgetFox();drawPlayer();drawParticles();drawVignette()}
+function drawSky(L){ctx.fillStyle=L.bg;ctx.fillRect(0,0,960,600);ctx.fillStyle='rgba(255,255,255,.12)';for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*91+Date.now()/80)%980,40+(i%4)*28,16+i%3*4,0,Math.PI*2);ctx.fill()}}
+function drawTile(t,x,y,gx,gy,L){let c=t==='T'?'#21452f':t==='P'?'#d9b46f':t==='W'?'#3fa9f5':t==='M'?'#4b5563':t==='H'?'#8b5e34':'#7fc96d';ctx.fillStyle=c;ctx.fillRect(x,y,TILE,TILE);ctx.strokeStyle='rgba(0,0,0,.06)';ctx.strokeRect(x,y,TILE,TILE);if(t==='G'){ctx.fillStyle='rgba(255,255,255,.14)';ctx.fillRect(x+8,y+8,5,5);ctx.fillRect(x+30,y+27,4,4);if((gx+gy)%5===0){drawTinyFlower(x+33,y+10,'#fff6bf')}if((gx*2+gy)%7===0){drawTinyFlower(x+11,y+33,'#ef476f')}}if(t==='P'){ctx.fillStyle='rgba(90,54,22,.18)';ctx.beginPath();ctx.arc(x+10,y+12,3,0,Math.PI*2);ctx.arc(x+31,y+31,2,0,Math.PI*2);ctx.fill()}if(t==='W'){let wave=(Date.now()/120+gx*8)%28;ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(x+4+wave,y+14,16,4);ctx.fillRect(x+2+((wave+12)%30),y+32,12,3);ctx.fillStyle='rgba(0,82,140,.18)';ctx.fillRect(x,y+TILE-8,TILE,8)}if(t==='T'){ctx.fillStyle='#2e6b3f';ctx.beginPath();ctx.arc(x+24+Math.sin(Date.now()/900+gx)*2,y+20,20,0,Math.PI*2);ctx.fill();ctx.fillStyle='#5b371d';ctx.fillRect(x+20,y+26,8,18);ctx.fillStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.arc(x+17,y+13,5,0,Math.PI*2);ctx.fill()}if(t==='H'){ctx.fillStyle='rgba(255,225,140,.18)';ctx.fillRect(x+6,y+7,34,8);ctx.fillRect(x+8,y+25,32,7)}}
+function drawTinyFlower(x,y,color){ctx.fillStyle=color;for(let a=0;a<Math.PI*2;a+=Math.PI/2){ctx.beginPath();ctx.arc(x+Math.cos(a)*3,y+Math.sin(a)*3,2,0,Math.PI*2);ctx.fill()}ctx.fillStyle='#f7c948';ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill()}
+function drawScenery(L){ctx.fillStyle='rgba(255,247,204,.25)';ctx.beginPath();ctx.arc(120,90,55,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(0,0,960,8)}
+function drawBoard(x,y){ctx.fillStyle='#7a4e2a';ctx.fillRect(x+8,y+14,32,26);ctx.fillStyle='#f5deb3';ctx.fillRect(x+4,y+4,40,24);ctx.fillStyle='#17202a';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText('TRY',x+24,y+20)}
+function drawChest(x,y){if(!state.chest){ctx.save();ctx.globalAlpha=.35+Math.sin(Date.now()/180)*.12;ctx.fillStyle='#fff6bf';ctx.beginPath();ctx.arc(x+24,y+26,32,0,Math.PI*2);ctx.fill();ctx.restore()}ctx.fillStyle=state.chest?'#a16207':'#f7c948';round(x+8,y+16,32,24,6);ctx.fill();ctx.fillStyle='#704214';ctx.fillRect(x+8,y+26,32,4);ctx.fillStyle=state.chest?'#fff6bf':'#17202a';ctx.fillRect(x+21,y+25,6,8);if(!state.chest)drawStarShape(x+24,y+7,8,'#fff6bf','#f7c948')}
+function drawGate(x,y){ctx.save();ctx.globalAlpha=state.ready?.95:.45;ctx.fillStyle=state.ready?'#f7c948':'#7b61ff';ctx.beginPath();ctx.arc(x+24,y+24,35+Math.sin(Date.now()/250)*5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17202a';round(x+10,y+4,28,42,14);ctx.fill();ctx.fillStyle='white';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('GATE',x+24,y+58);ctx.restore()}
+function drawCharacter(x,y,color,name){ctx.fillStyle='rgba(0,0,0,.23)';ctx.beginPath();ctx.ellipse(x+24,y+42,18,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;round(x+9,y+14,30,30,9);ctx.fill();ctx.fillStyle='#ffd8a8';ctx.beginPath();ctx.arc(x+24,y+13,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17202a';ctx.fillRect(x+18,y+12,4,4);ctx.fillRect(x+27,y+12,4,4);ctx.fillStyle='rgba(7,11,24,.75)';round(x-24,y-16,96,17,8);ctx.fill();ctx.fillStyle='white';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText(name,x+24,y-4)}
+
+function drawFidgetFox(){
+  if(!state.started) return;
+  const bob=Math.sin(Date.now()/260)*2;
+  const x=fox.x, y=fox.y+bob;
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(x+17,y+28,18,6,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#f97316';ctx.beginPath();ctx.ellipse(x-4,y+13,18,8,-0.55,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff6df';ctx.beginPath();ctx.ellipse(x-15,y+7,7,4,-0.55,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fb923c';round(x+4,y+10,28,20,8);ctx.fill();
+  ctx.fillStyle='#f97316';ctx.beginPath();ctx.arc(x+20,y+8,13,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#f97316';ctx.beginPath();ctx.moveTo(x+10,y+1);ctx.lineTo(x+15,y-13);ctx.lineTo(x+20,y+2);ctx.fill();ctx.beginPath();ctx.moveTo(x+25,y+1);ctx.lineTo(x+31,y-12);ctx.lineTo(x+33,y+6);ctx.fill();
+  ctx.fillStyle='#fff6df';ctx.beginPath();ctx.moveTo(x+13,y);ctx.lineTo(x+15,y-7);ctx.lineTo(x+18,y+1);ctx.fill();
+  ctx.fillStyle='#fff6df';ctx.beginPath();ctx.ellipse(x+21,y+12,11,8,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#17202a';ctx.fillRect(x+15,y+7,3,3);ctx.fillRect(x+25,y+7,3,3);ctx.beginPath();ctx.arc(x+22,y+13,2.8,0,Math.PI*2);ctx.fill();
+  drawStarShape(x+20,y+28,5,'#f7c948','#17202a');
+  if(fox.bubbleTimer>0){
+    const bx=Math.min(Math.max(x-24,110),760), by=Math.max(42,y-58);
+    ctx.globalAlpha=Math.min(1,fox.bubbleTimer/25);
+    ctx.fillStyle='rgba(255,255,255,.96)';round(bx,by,190,42,12);ctx.fill();
+    ctx.strokeStyle='rgba(23,32,42,.35)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#17202a';ctx.font='900 11px system-ui';ctx.textAlign='left';wrapText(fox.tip,bx+10,by+16,170,13);
+  }
+  ctx.restore();
+}
+function wrapText(text,x,y,maxWidth,lineHeight){
+  const words=text.split(' ');let line='';
+  for(let n=0;n<words.length;n++){
+    const test=line+words[n]+' ';
+    if(ctx.measureText(test).width>maxWidth&&n>0){ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight;}
+    else line=test;
+  }
+  ctx.fillText(line,x,y);
+}
+function updateFox(){
+  if(!state.started) return;
+  const targetX=player.x-44+(state.keys.ArrowLeft||state.keys.a?70:0);
+  const targetY=player.y+12;
+  fox.x+=(targetX-fox.x)*0.08;fox.y+=(targetY-fox.y)*0.08;
+  if(fox.bubbleTimer>0) fox.bubbleTimer--;
+}
+function foxSpeak(kind='idle',dialogue=false){
+  const list=foxTips[kind]||foxTips.idle;
+  fox.tip=list[Math.floor(Math.random()*list.length)];
+  fox.bubbleTimer=260;
+  spawnParticles(fox.x+18,fox.y+8,'sparkle',10);
+  if(dialogue) showMessage('Fidget Fox', fox.tip);
+}
+function askFox(){
+  AudioGame.unlock();AudioGame.sfx('click');
+  if(!state.started) return;
+  if(state.message){hideMessage();return}
+  const kind=state.energy<=2?'lowEnergy':state.ready?'gate':!state.met?'start':!state.challenge?'npc':!state.chest?'challenge':'idle';
+  foxSpeak(kind,true);
+}
+function drawPlayer(){let x=player.x,y=player.y-player.z;ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(player.x+17,player.y+38,Math.max(9,18-player.z*.16),Math.max(3,7-player.z*.06),0,0,Math.PI*2);ctx.fill();if(player.jumping){ctx.strokeStyle='rgba(255,246,191,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x+17,y+26,25+Math.sin(Date.now()/90)*3,0,Math.PI*2);ctx.stroke()}ctx.fillStyle=player.color;round(x+1,y+13,32,28,9);ctx.fill();ctx.fillStyle='#ffd8a8';ctx.beginPath();ctx.arc(x+17,y+12,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17202a';ctx.fillRect(x+11,y+11,4,4);ctx.fillRect(x+20,y+11,4,4);ctx.strokeStyle='#f7c948';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+17,y+27,19,Math.PI*.15,Math.PI*.85);ctx.stroke()}
+function spawnParticles(x,y,type='sparkle',count=18){const colors=type==='star'?['#fff6bf','#f7c948','#ffea00','#ffffff']:type==='jump'?['#d9b46f','#fff6bf','#ffffff']:['#06d6a0','#7b61ff','#f7c948','#ffffff'];for(let i=0;i<count;i++){particles.push({x,y,vx:(Math.random()-.5)*(type==='star'?6:4),vy:(Math.random()-.75)*(type==='star'?7:4),life:55+Math.random()*25,size:type==='star'?8+Math.random()*8:3+Math.random()*5,color:colors[i%colors.length],type})}}
+function spawnStarReward(label='Focus Star'){spawnParticles(player.x+17,player.y-8,'star',28);floatText(player.x+17,player.y-22,`⭐ ${label}`);AudioGame.sfx('star')}
+function floatText(x,y,text){particles.push({x,y,vx:0,vy:-.8,life:70,size:18,color:'#fff6bf',type:'text',text})}
+function drawParticles(){for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=p.type==='text'?0:.10;p.life--;ctx.save();ctx.globalAlpha=Math.max(0,p.life/70);if(p.type==='star'){drawStarShape(p.x,p.y,p.size*.55,p.color,'rgba(23,32,42,.35)')}else if(p.type==='text'){ctx.font='900 18px system-ui';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='rgba(23,32,42,.75)';ctx.strokeText(p.text,p.x,p.y);ctx.fillStyle=p.color;ctx.fillText(p.text,p.x,p.y)}else{ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()}ctx.restore();if(p.life<=0)particles.splice(i,1)}}
+function drawVignette(){const g=ctx.createRadialGradient(480,300,150,480,300,520);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.22)');ctx.fillStyle=g;ctx.fillRect(0,0,960,600)}
+function drawStarShape(cx,cy,r,fill='#f7c948',stroke='#17202a'){ctx.save();ctx.beginPath();for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5;let rr=i%2===0?r:r*.45;ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)}ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=stroke;ctx.stroke();ctx.restore()}
+function round(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function update(){updateFox();if(player.jumping){player.z+=player.vz;player.vz-=1.05;if(player.z<=0){player.z=0;player.vz=0;player.jumping=false;spawnParticles(player.x+17,player.y+38,'jump',10)}}if(!state.started||state.message)return;let dx=0,dy=0;if(state.keys.ArrowUp||state.keys.w)dy-=1;if(state.keys.ArrowDown||state.keys.s)dy+=1;if(state.keys.ArrowLeft||state.keys.a)dx-=1;if(state.keys.ArrowRight||state.keys.d)dx+=1;if(dx||dy){let len=Math.hypot(dx,dy);move(dx/len*player.spd,dy/len*player.spd)}}
+function jump(){AudioGame.unlock();if(!state.started||state.message||player.jumping)return;player.jumping=true;player.vz=13;spawnParticles(player.x+17,player.y+38,'jump',14);AudioGame.sfx('jump');if(Math.random()<.45)foxSpeak('jump')}
+function move(dx,dy){let nx=player.x+dx,ny=player.y+dy;if(!blocked(nx,player.y))player.x=nx;if(!blocked(player.x,ny))player.y=ny}
+function blocked(x,y){const pts=[[x+4,y+8],[x+player.w-4,y+8],[x+4,y+player.h-2],[x+player.w-4,y+player.h-2]];return pts.some(([px,py])=>{const gx=Math.floor(px/TILE),gy=Math.floor(py/TILE);const t=lvl().map[gy]?.[gx]||'T';return ['T','W','M'].includes(t)})}
+function near(x,y,dist=72){return Math.hypot(player.x+17-(x*TILE+24),player.y+22-(y*TILE+24))<dist}
+function interact(){AudioGame.unlock();AudioGame.sfx('click');if(state.message){hideMessage();return}if(near(15,5))talkNpc();else if(near(4,4))challenge();else if(near(16,8))chest();else if(near(16,10))gate();else showMessage('Inner Coach','Move closer to a helper, practice board, chest, or gate.')}
+function talkNpc(){state.met=true;addTool(lvl().tool);state.step=Math.max(state.step,1);foxSpeak('npc');showMessage(lvl().npc,dialogueFor(lvl())+`<br><br><strong>New tool:</strong> ${lvl().tool}`);checkReady()}
+function dialogueFor(L){return `This is ${L.title}. Today we learn: <strong>${L.teach}</strong> The challenge gets harder as the tiers rise.`}
+function challenge(){const c=lvl().challenge;const choices={breath:['Take 3 slow breaths','Run in circles and yell'],tiny:['Pick one 2-minute step','Demand perfect focus all day'],return:['I noticed. I return.','I got distracted, so I quit.'],plan:['First, next, finish','Start with no plan'],timer:['10 minute sprint + break','Work forever without stopping'],body:['Stretch, walk, reset','Ignore body signals'],kind:['This is hard, and I can try','I am terrible at everything'],env:['Silence alerts and clear desk','Keep every distraction open'],priority:['Choose one main quest','Do all quests at once'],restart:['Begin again with one step','The day is ruined']};let [good,bad]=choices[c]||choices.breath;E.dialogueText.innerHTML=`<strong>Practice Board:</strong><br>${hardText()} Choose the ADHD-friendly response.`;E.dialogueActions.innerHTML=`<button class="good" onclick="answerChallenge(true)">${good}</button><button class="warn" onclick="answerChallenge(false)">${bad}</button>`;E.dialogue.style.display='block';state.message=true}
+function hardText(){return state.hardMode?`Hard Mode ${state.hardMode}: less energy, harder choices, same wisdom.`:'Practice Round:'}
+function answerChallenge(good){if(good){AudioGame.sfx('success');state.challenge=true;state.step=Math.max(state.step,2);state.stars++;spawnStarReward('Focus Star');foxSpeak('challenge');showMessage('Practice Board','Great choice. You practiced the skill instead of just hearing about it.')}else{AudioGame.sfx('error');state.energy=Math.max(1,state.energy-1);foxSpeak('miss');showMessage('Practice Board','Try again with kindness. The ADHD-friendly answer usually lowers pressure, adds structure, or helps you return.')}checkReady()}
+function chest(){if(state.chest){showMessage('Treasure Chest','Already opened. The reward is still yours.');return}AudioGame.sfx('chest');state.chest=true;state.stars++;spawnStarReward('Treasure Star');foxSpeak('chest');state.step=Math.max(state.step,3);showMessage('Treasure Chest',`You found a Focus Star and strengthened your ${lvl().tool}.`);checkReady()}
+function gate(){if(!state.ready){foxSpeak('idle');showMessage('Level Gate','The gate needs three things: meet the helper, complete the practice board, and open the chest.');return}completeLevel()}
+function checkReady(){if(state.met&&state.challenge&&state.chest){state.ready=true;state.step=4}ui()}
+function addTool(t){if(!state.tools.includes(t))state.tools.push(t)}
+function openBreathing(){if(!state.started)return;by('breathing').style.display='grid';state.message=true;state.energy=Math.min(6,state.energy+1);addTool('Pause Power');ui()}
+function closeBreathing(){by('breathing').style.display='none';state.message=false;ui()}
+function showMessage(s,h){E.dialogueText.innerHTML=`<strong>${s}:</strong><br>${h}`;E.dialogueActions.innerHTML='<button onclick="hideMessage()">Continue</button>';E.dialogue.style.display='block';state.message=true;ui()}
+function hideMessage(){E.dialogue.style.display='none';state.message=false;ui()}
+function completeLevel(){AudioGame.sfx('fanfare');foxSpeak('gate');spawnParticles(player.x+17,player.y+15,'star',40);celebrate(`Level Complete!`,`${lvl().tier}: ${lvl().title} cleared.`,[lvl().badge,`⭐ Stars: ${state.stars}`,`🧠 ${lvl().tool}`])}
+function celebrate(title,text,badges){E.celebrateTitle.textContent=title;E.celebrateText.textContent=text;E.badgeRow.innerHTML=badges.map(b=>`<div class="badge">${b}</div>`).join('');E.confetti.innerHTML='';for(let i=0;i<80;i++){let c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=['#f7c948','#06d6a0','#ef476f','#7b61ff','#118ab2'][i%5];c.style.animationDelay=Math.random()*2+'s';E.confetti.appendChild(c)}for(let i=0;i<16;i++){let s=document.createElement('div');s.className='sparkle';s.style.left=6+Math.random()*88+'%';s.style.top=8+Math.random()*84+'%';s.style.animationDelay=Math.random()+'s';E.confetti.appendChild(s)}E.celebrate.style.display='grid';state.message=true}
+function showLesson(){E.celebrate.style.display='none';E.lessonTitle.textContent=`Stopping Point: ${lvl().title}`;E.lessonIntro.textContent='Pause and review before moving on:';E.lessonList.innerHTML=lvl().lesson.map(x=>`<li>${x}</li>`).join('');E.lesson.style.display='grid'}
+function continueFromLesson(){E.lesson.style.display='none';state.message=false;if(state.level<levels.length-1){state.level++;resetLevel();showMessage('New Tier Path',`Welcome to ${lvl().tier} — ${lvl().title}.`)}else{finishRun()}ui()}
+function finishRun(){state.hardMode++;state.level=0;resetLevel();celebrate('Advanced Complete!','You finished the full adventure. Start over on a more advanced setting and replay the same concepts with harder challenges.',[`Hard Mode ${state.hardMode} Unlocked`,'🔁 Start Over','🏆 ADHD Toolkit Complete']);E.badgeRow.innerHTML+=`<button class="good" onclick="restartHard()">Start Over: Hard Mode ${state.hardMode}</button>`}
+function restartHard(){E.celebrate.style.display='none';state.message=false;showMessage('Hard Mode','Same ADHD skills. Less starting energy. More practice. Let’s begin again.')}
+function ui(){const L=lvl();E.tier.textContent=L.tier+(state.hardMode?` · Hard ${state.hardMode}`:'');E.level.textContent=`Level ${state.level+1}: ${L.title}`;E.energy.textContent=`Energy ${state.energy}`;E.stars.textContent=`Stars ${state.stars}`;E.tool.textContent=`Tool: ${state.tools.at(-1)||'none'}`;E.sideTitle.textContent=`${L.tier} Level ${state.level%3+1}: ${L.title}`;E.sideGoal.textContent=L.goal;E.progress.style.width=(state.ready?100:state.step*25)+'%';const quests=['Meet the helper','Complete the practice board','Open the chest','Reach the gate','Gate is ready'];E.questTitle.textContent=state.ready?'Quest: Reach the Gate':`Quest: ${quests[state.step]||quests[0]}`;E.questText.textContent=state.ready?'Walk to the glowing gate and press Space/E.':`${L.goal} Current objective: ${quests[state.step]||quests[0]}.`;E.teachBox.textContent=L.teach;E.tierGrid.innerHTML=tiers.map((t,i)=>`<div class="tier-chip ${i===L.tierIndex?'active':''}">${i+1}. ${t}</div>`).join('');E.tools.innerHTML=state.tools.length?'':'<div class="small">No tools yet. Talk to the first helper.</div>';state.tools.forEach(t=>{let [ic,ttl,desc]=toolInfo[t];E.tools.innerHTML+=`<div class="tool-card"><div class="tool-icon">${ic}</div><div><strong>${ttl}</strong><div class="small">${desc}</div></div></div>`})}
+function loop(){update();draw();ui();requestAnimationFrame(loop)}
+window.addEventListener('keydown',e=>{state.keys[e.key]=true;state.keys[e.key.toLowerCase()]=true;if([' ','e','E'].includes(e.key)){e.preventDefault();interact()}if(['j','J','Shift'].includes(e.key)){e.preventDefault();jump()}if(['f','F'].includes(e.key)){e.preventDefault();askFox()}if(['b','B'].includes(e.key))openBreathing()});window.addEventListener('keyup',e=>{state.keys[e.key]=false;state.keys[e.key.toLowerCase()]=false});document.querySelectorAll('[data-dir]').forEach(b=>{const km={up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'},k=km[b.dataset.dir];b.addEventListener('pointerdown',()=>state.keys[k]=true);b.addEventListener('pointerup',()=>state.keys[k]=false);b.addEventListener('pointerleave',()=>state.keys[k]=false)});document.querySelector('[data-action="interact"]').addEventListener('click',interact);document.querySelector('[data-action="jump"]').addEventListener('click',jump);document.querySelector('[data-action="fox"]').addEventListener('click',askFox);document.querySelector('[data-action="breathe"]').addEventListener('click',openBreathing);const audioBar=document.getElementById('audioBar'),audioToggle=document.getElementById('audioToggle');let audioCollapseTimer=null;function openAudioPanel(){audioBar.classList.remove('collapsed');audioToggle.textContent='✕';clearTimeout(audioCollapseTimer);audioCollapseTimer=setTimeout(()=>{audioBar.classList.add('collapsed');audioToggle.textContent='🎵'},4500)}function closeAudioPanel(){audioBar.classList.add('collapsed');audioToggle.textContent='🎵';clearTimeout(audioCollapseTimer)}audioToggle.addEventListener('click',()=>audioBar.classList.contains('collapsed')?openAudioPanel():closeAudioPanel());document.getElementById('musicBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.toggle()});document.getElementById('sfxBtn').addEventListener('click',()=>{openAudioPanel();AudioGame.test()});ui();loop();
+</script>
+</body>
+</html>
