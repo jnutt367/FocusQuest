@@ -260,6 +260,86 @@
   }
 }
 
+
+
+/* === Mobile end-of-level overlay fix ===
+   Keep Review / Continue buttons reachable on phones after winning a level. */
+@media(max-width:930px){
+  .celebrate-overlay,
+  .lesson-overlay{
+    inset:8px;
+    padding:10px;
+    overflow:hidden;
+    align-items:center;
+    justify-items:center;
+    z-index:70;
+  }
+
+  .celebrate-card,
+  .lesson-card{
+    width:min(96%, 620px);
+    max-height:calc(100% - 12px);
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:16px 14px 18px;
+    border-radius:22px;
+  }
+
+  .celebrate-card h1,
+  .lesson-card h1{
+    font-size:clamp(26px, 8vw, 34px);
+    line-height:1.05;
+  }
+
+  .celebrate-card p,
+  .lesson-card p,
+  .lesson-card li{
+    font-size:15px;
+    line-height:1.35;
+  }
+
+  .lesson-card ul{
+    padding-left:20px;
+    margin:10px 0 12px;
+  }
+
+  .badge-row{
+    gap:6px;
+    margin:10px 0;
+  }
+
+  .badge{
+    padding:7px 9px;
+    font-size:12px;
+    border-radius:12px;
+  }
+
+  .celebrate-card button,
+  .lesson-card button{
+    position:sticky;
+    bottom:0;
+    width:100%;
+    margin-top:10px;
+    padding:13px 14px;
+    font-size:16px;
+    box-shadow:0 -8px 16px rgba(255,255,255,.92), 0 8px 18px rgba(0,0,0,.24);
+  }
+}
+
+@media(max-width:520px){
+  .celebrate-overlay,
+  .lesson-overlay{
+    inset:6px;
+    padding:8px;
+  }
+
+  .celebrate-card,
+  .lesson-card{
+    max-height:calc(100% - 8px);
+    padding:14px 12px 16px;
+  }
+}
+
 </style>
 </head>
 <body>
