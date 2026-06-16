@@ -153,6 +153,113 @@
   }
 }
 
+
+/* Large readable discovery cards for mobile/desktop discoveries */
+.discovery-overlay{
+  background:linear-gradient(135deg,rgba(7,11,24,.94),rgba(18,36,75,.96));
+  color:white;
+  z-index:60;
+  padding:22px;
+}
+.discovery-card{
+  width:min(680px,92%);
+  max-height:calc(100% - 28px);
+  overflow:auto;
+  background:rgba(255,255,255,.96);
+  color:#17202a;
+  border:4px solid #f7c948;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 24px 70px rgba(0,0,0,.48);
+}
+.discovery-icon{
+  font-size:58px;
+  line-height:1;
+  margin-bottom:8px;
+  filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));
+}
+.discovery-card h1{
+  font-size:clamp(30px,6vw,54px);
+  margin:0 0 8px;
+  letter-spacing:-1px;
+}
+.discovery-card p{
+  font-size:clamp(17px,3.5vw,22px);
+  line-height:1.45;
+  margin:10px auto 16px;
+  max-width:560px;
+}
+.discovery-card .fox-line{
+  background:#fff7d6;
+  border:2px solid #f7c948;
+  border-radius:18px;
+  padding:12px 14px;
+  font-weight:900;
+  margin:12px auto;
+}
+.discovery-card button{
+  font-size:18px;
+  padding:13px 22px;
+  min-width:160px;
+}
+@media(max-width:930px){
+  .discovery-overlay{
+    inset:8px;
+    padding:12px;
+    align-items:center;
+  }
+  .discovery-card{
+    width:96%;
+    max-height:86vh;
+    padding:18px 16px;
+    border-radius:22px;
+  }
+  .discovery-icon{font-size:48px}
+  .discovery-card button{
+    width:100%;
+    margin-top:8px;
+    font-size:17px;
+  }
+}
+
+
+
+/* === Mobile playfield height refinement ===
+   Keep controls where they are, but give the actual game canvas more vertical room. */
+@media(max-width:930px){
+  body.game-active .screen-wrap{
+    padding:10px;
+  }
+
+  body.game-active canvas{
+    width:100%;
+    height:min(62dvh, calc(100vw * .82));
+    max-height:none;
+    aspect-ratio:auto;
+  }
+
+  body.game-active .mobile-pad{
+    margin-top:16px;
+    margin-bottom:8px;
+  }
+
+  body.game-active .panel{
+    margin-top:18px;
+  }
+}
+
+@media(max-width:520px){
+  body.game-active canvas{
+    height:min(60dvh, calc(100vw * .86));
+  }
+
+  body.game-active .mobile-pad{
+    margin-top:14px;
+    margin-bottom:8px;
+    transform:scale(.94);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -164,6 +271,7 @@
 <div class="overlay breathing" id="breathing"><div><h1>Pause Power</h1><p>Breathe in as the circle grows. Breathe out as it shrinks.</p><div class="breath-circle"></div><button onclick="closeBreathing()">I feel ready</button></div></div>
 <div class="overlay lesson-overlay" id="lesson"><div class="lesson-card"><h1 id="lessonTitle"></h1><p id="lessonIntro"></p><ul id="lessonList"></ul><button class="good" onclick="continueFromLesson()">Continue</button></div></div>
 <div class="overlay celebrate-overlay" id="celebrate"><div id="confettiLayer"></div><div class="celebrate-card"><h1 id="celebrateTitle"></h1><p id="celebrateText"></p><div class="badge-row" id="badgeRow"></div><button onclick="showLesson()">Review What We Learned</button></div></div>
+<div class="overlay discovery-overlay" id="discovery"><div class="discovery-card"><div class="discovery-icon" id="discoveryIcon">✨</div><h1 id="discoveryTitle">Discovery!</h1><p id="discoveryText"></p><div class="fox-line" id="discoveryFox">🦊 Nice exploring!</div><button class="good" onclick="closeDiscovery()">Continue</button></div></div>
 <div class="overlay start-overlay" id="start"><div class="start-card"><h1>Focus Quest</h1><p>A Zelda-like ADHD learning adventure with four tiers: Beginner, Intermediate, Tertiary, and Advanced. Finish Advanced to restart the quest on a harder setting.</p><button onclick="startGame()">Start Adventure</button><div class="small" style="color:#e8f1ff;margin-top:12px">Move: WASD / Arrows · Interact: Space / E · Jump: J / Shift · Ask Fox: F · Pause Tool: B · Audio: 🎵 bottom-right</div></div></div>
 <div class="mobile-pad"><button class="fox" data-action="fox">🦊</button><button data-dir="up">▲</button><span></span><button data-dir="left">◀</button><button data-action="interact">E</button><button data-dir="right">▶</button><button class="jump" data-action="jump">⤒</button><button data-dir="down">▼</button><button class="breathe" data-action="breathe">B</button></div>
 <div class="audio-bar collapsed" id="audioBar"><button id="audioToggle" class="audio-toggle" type="button" aria-label="Open audio controls">🎵</button><div class="audio-panel"><button id="musicBtn" type="button">🔇 Start Music</button><button id="sfxBtn" type="button" class="secondary">🔔 Test Sound</button><span class="audio-status" id="audioStatus">Click Start Music once.</span></div><div class="audio-help">Audio controls stay tucked away here so questions remain readable.</div></div>
@@ -181,7 +289,7 @@
 </main>
 <script>
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),TILE=48;
-const E={tier:by('hudTier'),level:by('hudLevel'),energy:by('hudEnergy'),stars:by('hudStars'),tool:by('hudTool'),dialogue:by('dialogue'),dialogueText:by('dialogueText'),dialogueActions:by('dialogueActions'),progress:by('progress'),sideTitle:by('sideTitle'),sideGoal:by('sideGoal'),questTitle:by('questTitle'),questText:by('questText'),tools:by('tools'),foxRewards:by('foxRewards'),teachBox:by('teachBox'),tierGrid:by('tierGrid'),lesson:by('lesson'),lessonTitle:by('lessonTitle'),lessonIntro:by('lessonIntro'),lessonList:by('lessonList'),celebrate:by('celebrate'),celebrateTitle:by('celebrateTitle'),celebrateText:by('celebrateText'),badgeRow:by('badgeRow'),confetti:by('confettiLayer')};
+const E={tier:by('hudTier'),level:by('hudLevel'),energy:by('hudEnergy'),stars:by('hudStars'),tool:by('hudTool'),dialogue:by('dialogue'),dialogueText:by('dialogueText'),dialogueActions:by('dialogueActions'),progress:by('progress'),sideTitle:by('sideTitle'),sideGoal:by('sideGoal'),questTitle:by('questTitle'),questText:by('questText'),tools:by('tools'),foxRewards:by('foxRewards'),teachBox:by('teachBox'),tierGrid:by('tierGrid'),lesson:by('lesson'),lessonTitle:by('lessonTitle'),lessonIntro:by('lessonIntro'),lessonList:by('lessonList'),celebrate:by('celebrate'),celebrateTitle:by('celebrateTitle'),celebrateText:by('celebrateText'),badgeRow:by('badgeRow'),confetti:by('confettiLayer'),discovery:by('discovery'),discoveryIcon:by('discoveryIcon'),discoveryTitle:by('discoveryTitle'),discoveryText:by('discoveryText'),discoveryFox:by('discoveryFox')};
 function by(id){return document.getElementById(id)}
 // --- Audio layer: WebAudio synth, no external files needed. Browser-safe: starts only after a click/tap. ---
 const AudioGame=(()=>{
@@ -638,30 +746,43 @@ function findSafeStart(sx,sy){
   return [sx,sy];
 }
 function near(x,y,dist=72){return Math.hypot(player.x+17-(x*TILE+24),player.y+22-(y*TILE+24))<dist}
+function showDiscovery(icon,title,text,foxLine){
+  AudioGame.sfx('success');
+  E.discoveryIcon.textContent=icon;
+  E.discoveryTitle.textContent=title;
+  E.discoveryText.textContent=text;
+  E.discoveryFox.textContent='🦊 '+foxLine;
+  E.discovery.style.display='grid';
+  state.message=true;
+  spawnParticles(player.x+17,player.y+24,'star',36);
+  ui();
+}
+function closeDiscovery(){
+  E.discovery.style.display='none';
+  state.message=false;
+  ui();
+}
+
 function checkFocusForestDiscovery(){
   if(state.level!==0||state.message) return;
   const tx=Math.floor((player.x+17)/TILE), ty=Math.floor((player.y+22)/TILE);
   if(!state.forestSecrets.path && tx<=6 && ty>=5 && ty<=8){
     state.forestSecrets.path=true;
     foxSay('This path was hiding in plain sight. Nice exploring!');
-    spawnParticles(player.x+17,player.y+24,'sparkle',16);
+    showDiscovery('🌿','Hidden Path Found!','You discovered a quiet path away from the main trail. Exploration is part of the adventure.','This path was hiding in plain sight. Nice exploring!');
   }
   if(!state.forestSecrets.grove && tx>=2 && tx<=6 && ty>=1 && ty<=4){
     state.forestSecrets.grove=true;
-    AudioGame.sfx('success');
     foxSay('Secret Grove found! Exploration is a focus skill too.');
-    spawnParticles(player.x+17,player.y+24,'star',32);
-    floatText(player.x+17,player.y-14,'🌲 Secret Grove Found!');
+    showDiscovery('🌲','Secret Grove Found!','You discovered a hidden place in Focus Forest. Secret areas may hold wisdom, rewards, and future treasures.','Wow! You found something special. Let’s look around.');
   }
   if(!state.forestSecrets.crystal && tx>=6 && tx<=8 && ty>=1 && ty<=3){
     state.forestSecrets.crystal=true;
-    AudioGame.sfx('success');
     foxSay('Crystal Clearing discovered. This will be a perfect hidden treasure spot soon!');
-    spawnParticles(player.x+17,player.y+24,'star',26);
-    floatText(player.x+17,player.y-14,'✨ Crystal Clearing!');
+    showDiscovery('✨','Crystal Clearing Discovered!','You found a glowing clearing deep in the forest. This is a perfect place for hidden treasure in the next build.','I smell something shiny nearby!');
   }
 }
-function interact(){AudioGame.unlock();AudioGame.sfx('click');if(state.message){hideMessage();return}if(near(15,5))talkNpc();else if(near(4,4))challenge();else if(near(16,8))chest();else if(near(16,10))gate();else showMessage('Inner Coach','Move closer to a helper, practice board, chest, or gate.')}
+function interact(){AudioGame.unlock();AudioGame.sfx('click');if(E.discovery && E.discovery.style.display==='grid'){closeDiscovery();return}if(state.message){hideMessage();return}if(near(15,5))talkNpc();else if(near(4,4))challenge();else if(near(16,8))chest();else if(near(16,10))gate();else showMessage('Inner Coach','Move closer to a helper, practice board, chest, or gate.')}
 function talkNpc(){state.met=true;addTool(lvl().tool);state.step=Math.max(state.step,1);foxSpeak('npc');showMessage(lvl().npc,dialogueFor(lvl())+`<br><br><strong>New tool:</strong> ${lvl().tool}`);checkReady()}
 function dialogueFor(L){return `This is ${L.title}. Today we learn: <strong>${L.teach}</strong> The challenge gets harder as the tiers rise.`}
 function challenge(){const c=lvl().challenge;const choices={breath:['Take 3 slow breaths','Run in circles and yell'],tiny:['Pick one 2-minute step','Demand perfect focus all day'],return:['I noticed. I return.','I got distracted, so I quit.'],plan:['First, next, finish','Start with no plan'],timer:['10 minute sprint + break','Work forever without stopping'],body:['Stretch, walk, reset','Ignore body signals'],kind:['This is hard, and I can try','I am terrible at everything'],env:['Silence alerts and clear desk','Keep every distraction open'],priority:['Choose one main quest','Do all quests at once'],restart:['Begin again with one step','The day is ruined']};let [good,bad]=choices[c]||choices.breath;E.dialogueText.innerHTML=`<strong>Practice Board:</strong><br>${hardText()} Choose the ADHD-friendly response.`;E.dialogueActions.innerHTML=`<button class="good" onclick="answerChallenge(true)">${good}</button><button class="warn" onclick="answerChallenge(false)">${bad}</button>`;E.dialogue.style.display='block';state.message=true}
